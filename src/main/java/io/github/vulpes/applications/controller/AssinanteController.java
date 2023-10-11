@@ -1,6 +1,7 @@
 package io.github.vulpes.applications.controller;
 
 import io.github.vulpes.applications.dto.AssinanteDTO;
+import io.github.vulpes.applications.dto.AssociarPlataformasDTO;
 import io.github.vulpes.applications.service.AssinanteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -55,5 +56,28 @@ public class AssinanteController {
         assinanteService.excluirAssinante(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/associar-plataformas")
+    @Transactional
+    public ResponseEntity<?> associarPlataformas(@PathVariable Long id, @RequestBody AssociarPlataformasDTO dto) {
+        try {
+            assinanteService.associarPlataformas(id, dto.getPlataformaIds());
+            return ResponseEntity.ok("Plataformas associadas com sucesso!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{assinanteId}/desassociar-plataforma/{plataformaId}")
+    @Transactional
+    public ResponseEntity<?> desassociarPlataforma(@PathVariable Long assinanteId, @PathVariable Long plataformaId) {
+        try {
+            assinanteService.desassociarPlataforma(assinanteId, plataformaId);
+            return ResponseEntity.ok("Plataforma desassociada com sucesso!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
 
