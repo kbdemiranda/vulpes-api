@@ -2,6 +2,7 @@ package io.github.vulpes.applications.controller;
 
 import io.github.vulpes.applications.dto.PlataformaDTO;
 import io.github.vulpes.applications.service.PlataformaService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/plataformas")
+@Tag(name = "Plataformas", description = "APIs para gerenciamento de plataformas")
 public class PlataformaController {
 
     private final PlataformaService plataformaService;

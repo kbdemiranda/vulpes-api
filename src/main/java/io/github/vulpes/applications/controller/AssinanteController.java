@@ -3,6 +3,7 @@ package io.github.vulpes.applications.controller;
 import io.github.vulpes.applications.dto.AssinanteDTO;
 import io.github.vulpes.applications.dto.AssociarPlataformasDTO;
 import io.github.vulpes.applications.service.AssinanteService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/assinantes")
+@Tag(name = "Assinates", description = "APIs para gerenciamento de assinantes")
 public class AssinanteController {
 
     private final AssinanteService assinanteService;

@@ -2,6 +2,7 @@ package io.github.vulpes.applications.controller;
 
 import io.github.vulpes.applications.dto.PagamentoDTO;
 import io.github.vulpes.applications.service.PagamentoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/pagamentos")
+@Tag(name = "Pagamentos", description = "APIs para gerenciamento de pagamentos")
 public class PagamentoController {
 
     private final PagamentoService pagamentoService;
