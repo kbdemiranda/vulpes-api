@@ -29,7 +29,7 @@ public class AuthController {
         var token = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha());
         var authentication = authManager.authenticate(token);
 
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        var tokenJWT = tokenService.generateToken((Usuario) authentication.getPrincipal());
 
         return ResponseEntity.ok(tokenJWT);
     }

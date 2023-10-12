@@ -17,3 +17,5 @@ spring:
       hibernate:
         default_schema: vulpes
         format_sql: true
+jwt:
+  secret: ${JWTSECRET:ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722}
