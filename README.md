@@ -1,39 +1,92 @@
-# Vulpes API
+# Vulpes - Gerenciador de Assinaturas
 
-## Descrição
+## Índice
 
-Vulpes é uma API RESTful de gerenciamento de serviços por assinatura compartilhados. Desenvolvido com Spring Boot, o projeto permite que usuários registrem e gerenciem plataformas de assinatura como Netflix, HBO Max e Microsoft 365, bem como os membros com quem essas assinaturas são compartilhadas.
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Entidades e Relações](#entidades-e-relações)
+- [Endpoints](#endpoints)
+- [Segurança](#segurança)
+- [Como Rodar o Projeto](#como-rodar-o-projeto)
+- [Testes](#testes)
+- [Documentação da API](#documentação-da-api)
+- [Contribuição](#contribuição)
+
+## Sobre o Projeto
+
+Vulpes é um gerenciador de assinaturas que permite aos usuários controlar suas diversas assinaturas de serviços como streaming, software, entre outros. O projeto foi desenvolvido usando Spring Boot no backend.
 
 ## Tecnologias Utilizadas
 
+- Java 11
 - Spring Boot
-- Spring Web
-- Spring Data JPA
+- Spring Security
+- JWT para autenticação
 - PostgreSQL
-- Flyway
-- Spring Validation
+- JPA/Hibernate
+- Maven
+- JUnit para testes
+- Swagger para documentação da API
 
-## Como Rodar o Projeto
+## Entidades e Relações
 
-1. Clone o repositório para sua máquina local.
-2. Configure o banco de dados PostgreSQL e atualize o arquivo \`application.yml\`.
-3. Execute o comando \`./mvnw spring-boot:run\` para iniciar a aplicação.
-4. A API estará disponível em \`http://localhost:8080\`.
+- `Assinante`: Informações sobre o assinante.
+- `AssinantePlataforma`: Relação entre assinantes e plataformas.
+- `Pagamento`: Informações sobre os pagamentos.
+- `Perfil`: Perfis de usuário para controle de acesso.
+- `Plataforma`: Informações sobre as plataformas de assinatura.
+- `StatusPagamentoMensal`: Status mensal dos pagamentos.
+- `Usuario`: Informações sobre os usuários do sistema.
 
 ## Endpoints
 
-- \`GET /plataformas\`: Lista todas as plataformas
-- \`GET /plataformas/{id}\`: Busca uma plataforma pelo ID
-- \`POST /plataformas\`: Cadastra uma nova plataforma
-- \`PUT /plataformas/{id}\`: Atualiza uma plataforma existente pelo ID
-- \`DELETE /plataformas/{id}\`: Exclui uma plataforma pelo ID
+### Assinantes
 
-- \`GET /assinantes\`: Lista todos os assinantes
-- \`GET /assinantes/{id}\`: Busca um assinante pelo ID
-- \`POST /assinantes\`: Cadastra um novo assinante
-- \`PUT /assinantes/{id}\`: Atualiza um assinante existente pelo ID
-- \`DELETE /assinantes/{id}\`: Exclui um assinante pelo ID
+- `GET /assinantes`: Listar todos os assinantes.
+- `POST /assinantes`: Cadastrar um novo assinante.
+- `PUT /assinantes/{id}`: Atualizar um assinante.
+- `DELETE /assinantes/{id}`: Excluir um assinante.
+
+### Plataformas
+
+- `GET /plataformas`: Listar todas as plataformas.
+- `POST /plataformas`: Cadastrar uma nova plataforma.
+- `PUT /plataformas/{id}`: Atualizar uma plataforma.
+- `DELETE /plataformas/{id}`: Excluir uma plataforma.
+
+### Pagamentos
+
+- `GET /pagamentos`: Listar todos os pagamentos.
+- `POST /pagamentos`: Registrar um novo pagamento.
+- `PUT /pagamentos/{id}`: Atualizar um pagamento.
+- `DELETE /pagamentos/{id}`: Excluir um pagamento.
+
+### Usuários
+
+- `GET /usuarios`: Listar todos os usuários.
+- `POST /usuarios`: Cadastrar um novo usuário.
+- `PUT /usuarios/{id}`: Atualizar um usuário.
+- `DELETE /usuarios/{id}`: Excluir um usuário.
+
+## Segurança
+
+O projeto utiliza Spring Security e JWT para autenticação e autorização. O token JWT deve ser incluído no header das requisições.
+
+## Como Rodar o Projeto
+
+```bash
+mvn clean install
+java -jar target/vulpes-0.0.1-SNAPSHOT.jar
+```
+
+## Testes
+
+O projeto inclui testes unitários e de integração usando JUnit.
+
+## Documentação da API
+
+A documentação da API está disponível através do Swagger em `http://localhost:8080/swagger-ui/`.
 
 ## Contribuição
 
-Sinta-se à vontade para contribuir com o projeto. Abra um PR e vamos discutir suas ideias!
+Para contribuir com o projeto, por favor, faça um fork e abra um pull request.
