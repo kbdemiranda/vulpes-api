@@ -14,7 +14,8 @@ public interface PlataformaRepository extends JpaRepository<Plataforma, Long> {
 
     @Query("select p from Plataforma p " +
             "where (:nome is null or p.nome like %:nome%) " +
-            "and p.excluidoEm is null")
+            "and p.excluidoEm is null " +
+            "order by p.id asc")
     Page<Plataforma> findPlataforma(@Param("nome") String nome, Pageable pageable);
 
     @Query("update Plataforma p set p.excluidoEm = current_timestamp() where p.id = :id")
