@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,11 +65,31 @@ public class AssinanteServiceImpl implements AssinanteService {
         assinanteDTO.setPlataformasAssociadas(plataformas.stream()
                 .map(plataforma -> modelMapper.map(plataforma, PlataformaResumoDTO.class))
                 .collect(Collectors.toList()));
+
+        assinanteDTO.setPlataformasAssociadas(plataformasMapper(plataformas));
         assinanteDTO.setValorPorMes(valorPorMes);
 
 
         return assinanteDTO;
     }
+
+    private List<PlataformaResumoDTO> plataformasMapper(List<Plataforma> plataformas) {
+        List<PlataformaResumoDTO> resumoDTOList = new ArrayList<>(); // Inicializa a lista fora do loop
+
+
+        for (Plataforma plataforma : plataformas) {
+            BigDecimal totalVagas = new BigDecimal(plataforma.getTotalVagas());
+            BigDecimal vagasDisponiveis = new BigDecimal(plataforma.getVagasDisponiveis());
+            BigDecimal assinantesAtuais = totalVagas.subtract(vagasDisponiveis);
+
+            PlataformaResumoDTO plataformaResumoDTO = modelMapper.map(plataforma, PlataformaResumoDTO.class);
+            plataformaResumoDTO.setPrecoMensal(plataforma.getPreco());
+            plataformaResumoDTO.setPrecoIndividual(plataforma.getPreco().divide(assinantesAtuais, 2, RoundingMode.HALF_UP));
+            resumoDTOList.add(plataformaResumoDTO); // Adiciona o DTO mapeado à lista
+        }
+        return resumoDTOList; // Retorna a lista completa ao final
+    }
+
 
     @Override
     public AssinanteDTO cadastrarAssinante(AssinanteDTO dto) {
