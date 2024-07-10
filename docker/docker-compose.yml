@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    container_name: vulpes_app
+    depends_on:
+      - db
+    networks:
+      - vulpes_network
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/vulpes
+      - SPRING_DATASOURCE_USERNAME=SysVulpes
+      - SPRING_DATASOURCE_PASSWORD=r2*dNN*26E96
+
+  db:
+    image: "kbdemiranda/postgres:bullseye"
+    container_name: vulpes_db
+    hostname: postgres
+    networks:
+      - vulpes_network
+    environment:
+      - POSTGRES_USER=SysVulpes
+      - POSTGRES_PASSWORD=r2*dNN*26E96
+      - POSTGRES_DB=vulpes
+    volumes:
+      - ${HOST_PATH:-./data}:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+networks:
+  vulpes_network:
+    driver: bridge

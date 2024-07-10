@@ -1,42 +1,62 @@
-version: '3'
+version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: vulpes_app
+  db:
+    hostname: db
+    container_name: vulpes-db
+    image: kbdemiranda/postgres:bullseye
+    volumes:
+      - ${HOME}/Volumes/VulpesDB:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: SysVulpes
+      POSTGRES_PASSWORD: r2*dNN*26E96
+      POSTGRES_DB: vulpes
+    ports:
+      - "5430:5432"
+    networks:
+      - vulpes-network
+
+  backend:
+    hostname: backend
+    container_name: vulpes-api
+    image: kbdemirnada/vulpes-api:openjdk-11
+    ports:
+      - "9090:8080"
+    environment:
+      HOSTNAME: backend
+      SPRING_APPLICATION_NAME: Vulpes
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_DATASOURCE_USERNAME: SysVulpes
+      SPRING_DATASOURCE_PASSWORD: r2*dNN*26E96
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/vulpes
+      SPRING_FLYWAY_DEFAULT_SCHEMA: vulpes
+      SPRING_JPA_SHOW_SQL: 'true'
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: vulpes
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: 'true'
+      SERVER_SERVLET_CONTEXT_PATH: /api
+      CORSALLOWEDORIGINS: 'http://frontend:4200'
+      CORSALLOWEDMETHODS: GET,POST,PUT,DELETE
+      CORSALLOWEDHEADERS: Authorization,Content-Type
+      CORSEXPOSEDHEADERS: Authorization
+      CORSALLOWCREDENTIALS: 'true'
+      JWT_SECRET: ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722
     depends_on:
       - db
     networks:
-      - vulpes_network
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/vulpes
-      - SPRING_DATASOURCE_USERNAME=SysVulpes
-      - SPRING_DATASOURCE_PASSWORD=r2*dNN*26E96
+      - vulpes-network
 
-  db:
-    image: "kbdemiranda/postgres:bullseye"
-    container_name: vulpes_db
-    hostname: postgres
-    networks:
-      - vulpes_network
-    environment:
-      - POSTGRES_USER=SysVulpes
-      - POSTGRES_PASSWORD=r2*dNN*26E96
-      - POSTGRES_DB=vulpes
-    volumes:
-      - ${HOST_PATH:-./data}:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  frontend:
+    hostname: frontend
+    container_name: vulpes-frontend
+    image: kbdemiranda/vulpes-web:latest
+
     ports:
-      - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    restart: always
+      - "4242:8080"
+    depends_on:
+      - backend
+    networks:
+      - vulpes-network
 
 networks:
-  vulpes_network:
+  vulpes-network:
     driver: bridge

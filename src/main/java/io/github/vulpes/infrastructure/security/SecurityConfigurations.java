@@ -14,12 +14,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
 
     private final SecurityFilter securityFilter;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+    @Value("${cors.allowed-methods}")
+    private String allowedMethods;
+    @Value("${cors.allowed-headers}")
+    private String allowedHeaders;
+    @Value("${cors.allow-credentials}")
+    private boolean allowCredentials;
 
     public SecurityConfigurations(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
@@ -37,12 +58,37 @@ public class SecurityConfigurations {
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
                 .headers(headers -> headers.frameOptions().disable())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .build();
     }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(allowedOrigins.split(","))
+                        .allowedMethods(allowedMethods.split(","))
+                        .allowedHeaders(allowedHeaders.split(","))
+                        .allowCredentials(allowCredentials);
+            }
+        };
+    }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+//        configuration.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
+//        configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
+//        configuration.setAllowCredentials(allowCredentials);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("**", configuration);
+//        return source;
+//    }
 
 
     @Bean
