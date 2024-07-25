@@ -26,3 +26,8 @@ CORS:
   max-age: ${CORSMAXAGE:3600}
 jwt:
   secret: ${JWTSECRET:ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722}
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

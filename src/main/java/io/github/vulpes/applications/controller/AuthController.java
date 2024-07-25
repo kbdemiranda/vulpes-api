@@ -12,9 +12,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,16 +33,6 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody @Valid LoginDTO dto){
-//        var token = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha());
-//        var authentication = authManager.authenticate(token);
-//
-//        var tokenJWT = tokenService.generateToken((Usuario) authentication.getPrincipal());
-//
-//        return ResponseEntity.ok(tokenJWT);
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         try {
@@ -47,11 +41,16 @@ public class AuthController {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = tokenService.generateToken((Usuario) authentication.getPrincipal());
-            long expiresIn = tokenService.getExpirationTime().getEpochSecond();
-            return ResponseEntity.ok(new AuthResponse(token, expiresIn));
+            return ResponseEntity.ok(new AuthResponse(token));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok().build();
     }
 
 
