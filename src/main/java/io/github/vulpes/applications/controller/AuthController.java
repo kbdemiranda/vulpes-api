@@ -1,6 +1,7 @@
 package io.github.vulpes.applications.controller;
 
 import io.github.vulpes.applications.dto.LoginDTO;
+import io.github.vulpes.applications.dto.TokenDTO;
 import io.github.vulpes.domain.models.Usuario;
 import io.github.vulpes.infrastructure.security.AuthResponse;
 import io.github.vulpes.infrastructure.security.TokenService;
@@ -40,8 +41,8 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = tokenService.generateToken((Usuario) authentication.getPrincipal());
-            return ResponseEntity.ok(new AuthResponse(token));
+            var token = tokenService.generateToken((Usuario) authentication.getPrincipal());
+            return ResponseEntity.ok(token);
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

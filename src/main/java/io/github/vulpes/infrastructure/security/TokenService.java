@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.github.vulpes.applications.dto.TokenDTO;
 import io.github.vulpes.domain.models.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,16 @@ public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(Usuario usuario) {
+    public TokenDTO generateToken(Usuario usuario) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
-            return JWT.create()
-                    .withIssuer("API VULPES")
+            TokenDTO token = new TokenDTO();
+            token.setToken(JWT.create()
                     .withSubject(usuario.getEmail())
+                    .withIssuer("API VULPES")
                     .withExpiresAt(dataExpiracao())
-                    .sign(algoritmo);
+                    .sign(algoritmo));
+            return token;
         } catch (JWTCreationException exception){
             throw new RuntimeException("erro ao gerar token jwt", exception);
         }
