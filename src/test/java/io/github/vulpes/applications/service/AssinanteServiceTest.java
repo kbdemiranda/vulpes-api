@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class AssinanteServiceTest {
@@ -36,8 +37,7 @@ class AssinanteServiceTest {
     @Mock
     private AssinantePlataformaRepository assinantePlataformaRepository;
 
-    @Mock
-    private final ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
 
     @InjectMocks
     private AssinanteServiceImpl assinanteService;
@@ -45,6 +45,7 @@ class AssinanteServiceTest {
     @BeforeEach
     public void init() {
         MockitoAnnotations.openMocks(this);
+        modelMapper = new ModelMapper();
         assinanteService = new AssinanteServiceImpl(assinanteRepository, plataformaRepository, assinantePlataformaRepository);
     }
 
@@ -56,18 +57,16 @@ class AssinanteServiceTest {
         assinante.setId(id);
         assinante.setNome("João");
 
-        AssinanteDTO expectedDto = new AssinanteDTO();
-        expectedDto.setId(id);
-        expectedDto.setNome("João");
-        expectedDto.setPlataformasAssociadas(new ArrayList<>());
-        expectedDto.setValorPorMes(BigDecimal.ZERO);
-
-
         when(assinanteRepository.findById(id)).thenReturn(Optional.of(assinante));
+        when(assinantePlataformaRepository.findPlataformaIdsByAssinanteId(id)).thenReturn(new ArrayList<>());
+        when(plataformaRepository.findAllById(new ArrayList<>())).thenReturn(new ArrayList<>());
 
         AssinanteDTO resultDto = assinanteService.buscarAssinante(id);
 
-        assertEquals(expectedDto, resultDto);
+        assertEquals(id, resultDto.getId());
+        assertEquals("João", resultDto.getNome());
+        assertTrue(resultDto.getPlataformasAssociadas().isEmpty());
+        assertEquals(BigDecimal.ZERO, resultDto.getValorPorMes());
     }
 
     @Test
@@ -89,13 +88,13 @@ class AssinanteServiceTest {
         // Mockar o repositório para retornar a página mockada
         when(assinanteRepository.findAssinante("", PageRequest.of(0, 10))).thenReturn(page);
 
-        Page<AssinanteDTO> assinanteDTOS = page.map(assinante -> modelMapper.map(assinante, AssinanteDTO.class));
-
         // Chamar o método a ser testado
         Page<AssinanteDTO> result = assinanteService.listarAssinantes("", PageRequest.of(0, 10));
 
         // Verificar se o resultado está correto
-        assertEquals(assinanteDTOS, result);
+        assertEquals(2, result.getContent().size());
+        assertEquals("João", result.getContent().get(0).getNome());
+        assertEquals("Maria", result.getContent().get(1).getNome());
     }
 
     @Test
@@ -105,28 +104,19 @@ class AssinanteServiceTest {
         inputDto.setNome("João");
         // ... (defina outros campos conforme necessário)
 
-        // Criar um objeto Assinante que você espera ser salvo
-        Assinante expectedAssinante = new Assinante();
-        expectedAssinante.setNome("João");
-        // ... (defina outros campos conforme necessário)
-
-        // Criar um DTO de saída (geralmente, isso seria retornado pelo método de serviço)
-        AssinanteDTO outputDto = new AssinanteDTO();
-        outputDto.setNome("João");
-        // ... (defina outros campos conforme necessário)
-
-        // Mockar o comportamento do modelMapper
-        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(expectedAssinante);
-        when(modelMapper.map(expectedAssinante, AssinanteDTO.class)).thenReturn(outputDto);
-
         // Mockar o comportamento do repositório
-        when(assinanteRepository.save(expectedAssinante)).thenReturn(expectedAssinante);
+        when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> {
+            Assinante a = invocation.getArgument(0);
+            a.setId(1L);
+            return a;
+        });
 
         // Chamar o método a ser testado
         AssinanteDTO resultDto = assinanteService.cadastrarAssinante(inputDto);
 
         // Verificar se o resultado está correto
-        assertEquals(outputDto, resultDto);
+        assertEquals("João", resultDto.getNome());
+        assertEquals(1L, resultDto.getId());
     }
 
     @Test
@@ -139,18 +129,13 @@ class AssinanteServiceTest {
         expectedAssinante.setId(id);
         expectedAssinante.setNome("João");
 
-        AssinanteDTO outputDto = new AssinanteDTO();
-        outputDto.setId(id);
-        outputDto.setNome("João");
-
         when(assinanteRepository.findById(id)).thenReturn(Optional.of(expectedAssinante));
-        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(expectedAssinante);
-        when(modelMapper.map(expectedAssinante, AssinanteDTO.class)).thenReturn(outputDto);
-        when(assinanteRepository.save(expectedAssinante)).thenReturn(expectedAssinante);
+        when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         AssinanteDTO resultDto = assinanteService.atualizarAssinante(id, inputDto);
 
-        assertEquals(outputDto.getId(), resultDto.getId());
+        assertEquals(id, resultDto.getId());
+        assertEquals("João", resultDto.getNome());
 
     }
 
