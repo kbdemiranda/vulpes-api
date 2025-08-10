@@ -168,13 +168,24 @@ class AssinanteServiceTest {
         inputDto.setNome("João Silva");
         inputDto.setEmail("joao@email.com");
 
-        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(assinante);
+        // Mock save to return the passed entity with an ID set (like a DB would)
         when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> {
-            Assinante a = invocation.getArgument(0);
-            a.setId(1L);
-            return a;
+            Assinante saved = invocation.getArgument(0);
+            saved.setId(1L);
+            return saved;
         });
-        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenReturn(assinanteDTO);
+
+        // Mock mapper to convert the saved entity to DTO reflecting fields
+        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenAnswer(invocation -> {
+            Assinante source = invocation.getArgument(0);
+            AssinanteDTO dto = new AssinanteDTO();
+            dto.setId(source.getId());
+            dto.setNome(source.getNome());
+            dto.setEmail(source.getEmail());
+            dto.setPlataformasAssociadas(new ArrayList<>());
+            dto.setValorPorMes(BigDecimal.ZERO);
+            return dto;
+        });
 
         AssinanteDTO result = assinanteService.cadastrarAssinante(inputDto);
 
@@ -182,7 +193,7 @@ class AssinanteServiceTest {
         assertEquals("João Silva", result.getNome());
         assertEquals("joao@email.com", result.getEmail());
         assertEquals(1L, result.getId());
-        
+
         verify(assinanteRepository).save(any(Assinante.class));
     }
 
@@ -191,13 +202,18 @@ class AssinanteServiceTest {
     void testCadastrarAssinante_NullData() {
         AssinanteDTO inputDto = new AssinanteDTO();
         inputDto.setNome(null);
+        inputDto.setEmail("sem.nome@email.com");
 
-        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(new Assinante());
-        when(assinanteRepository.save(any(Assinante.class))).thenThrow(new RuntimeException("Invalid data"));
+        // Simulate repository constraint/validation error when saving invalid entity
+        when(assinanteRepository.save(any(Assinante.class)))
+                .thenThrow(new RuntimeException("Dados inválidos: nome obrigatório"));
 
         assertThrows(RuntimeException.class, () -> assinanteService.cadastrarAssinante(inputDto));
-        
-        verify(assinanteRepository).save(any(Assinante.class));
+
+        // Save is attempted and fails due to invalid data
+        verify(assinanteRepository, times(1)).save(argThat(a -> a.getNome() == null));
+        // Mapping should not be called when save fails
+        verify(modelMapper, never()).map(any(Assinante.class), eq(AssinanteDTO.class));
     }
 
     @Test
@@ -323,6 +339,7 @@ class AssinanteServiceTest {
     }
 
     @Test
+    @DisplayName("Should successfully desassociate platform from assinante")
     void testDesassociarPlataforma() {
         Long assinanteId = 1L;
         Long plataformaId = 1L;
@@ -338,18 +355,15 @@ class AssinanteServiceTest {
         assinantePlataforma.setAssinante(assinante);
         assinantePlataforma.setPlataforma(plataforma);
 
-        // Mockar o comportamento dos repositórios
         when(assinanteRepository.findById(assinanteId)).thenReturn(Optional.of(assinante));
         when(plataformaRepository.findById(plataformaId)).thenReturn(Optional.of(plataforma));
+        doNothing().when(assinantePlataformaRepository).deleteAssinantePlataforma(assinanteId, plataformaId);
 
-        // Chamar o método a ser testado
         assinanteService.desassociarPlataforma(assinanteId, plataformaId);
 
-        // Verificar se os métodos corretos foram chamados nos repositórios
         verify(assinantePlataformaRepository).deleteAssinantePlataforma(assinanteId, plataformaId);
         verify(plataformaRepository).save(plataforma);
 
-        // Verificar se as vagas disponíveis foram incrementadas
         assertEquals(3, plataforma.getVagasDisponiveis());
     }
 

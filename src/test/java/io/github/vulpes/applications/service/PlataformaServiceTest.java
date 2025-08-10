@@ -137,6 +137,6 @@ class PlataformaServiceTest {
 
         plataformaService.excluirPlataforma(1L);
 
-        verify(plataformaRepository).deletePlataforma(1L);
+        verify(plataformaRepository).delete(plataforma);
     }
 }

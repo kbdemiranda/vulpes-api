@@ -68,7 +68,7 @@ public class PlataformaServiceImpl implements PlataformaService {
     @Override
     public void excluirPlataforma(Long id) {
         Plataforma plataforma = getPlataforma(id);
-        // Hard delete to align with integration tests expectations
+        // Hard delete to satisfy integration tests expectations
         plataformaRepository.delete(plataforma);
     }
 

@@ -28,12 +28,13 @@ public class AssinanteServiceImpl implements AssinanteService {
     private final AssinanteRepository assinanteRepository;
     private final PlataformaRepository plataformaRepository;
     private final AssinantePlataformaRepository assinantePlataformaRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
-    public AssinanteServiceImpl(AssinanteRepository assinanteRepository, PlataformaRepository plataformaRepository, AssinantePlataformaRepository assinantePlataformaRepository) {
+    public AssinanteServiceImpl(AssinanteRepository assinanteRepository, PlataformaRepository plataformaRepository, AssinantePlataformaRepository assinantePlataformaRepository, ModelMapper modelMapper) {
         this.assinanteRepository = assinanteRepository;
         this.plataformaRepository = plataformaRepository;
         this.assinantePlataformaRepository = assinantePlataformaRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -168,4 +169,3 @@ public class AssinanteServiceImpl implements AssinanteService {
         return plataformaRepository.findAllById(ids);
     }
 }
-
