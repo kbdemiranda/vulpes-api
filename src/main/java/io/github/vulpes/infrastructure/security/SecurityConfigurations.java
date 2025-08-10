@@ -54,7 +54,7 @@ public class SecurityConfigurations {
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST,"/auth/logout").permitAll()
                 .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .antMatchers("/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

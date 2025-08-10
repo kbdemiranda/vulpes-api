@@ -3,8 +3,14 @@ package io.github.vulpes.applications.controller;
 import io.github.vulpes.applications.dto.LoginDTO;
 import io.github.vulpes.applications.dto.TokenDTO;
 import io.github.vulpes.domain.models.Usuario;
+import io.github.vulpes.infrastructure.http.ErrorResponse;
 import io.github.vulpes.infrastructure.security.AuthResponse;
 import io.github.vulpes.infrastructure.security.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,7 +42,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+    @Operation(summary = "Login", description = "Autentica o usuário e retorna um token JWT")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autenticado",
+                    content = @Content(schema = @Schema(implementation = TokenDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
         try {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha())
@@ -49,6 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Logout", description = "Finaliza a sessão do usuário atual")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok().build();

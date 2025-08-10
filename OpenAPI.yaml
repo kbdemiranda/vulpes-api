@@ -1,0 +1,1199 @@
+openapi: 3.0.1
+info:
+  title: API Vulpes
+  description: ""
+  contact:
+    name: Kaique de Miranda
+    email: kbdemiranda@hotmail.com
+servers:
+- url: http://127.0.0.1:8080/api
+  description: Generated server url
+tags:
+- name: Pagamentos
+  description: APIs para gerenciamento de pagamentos
+- name: Autenticação
+  description: APIs para autenticação de usuários
+- name: Plataformas
+  description: APIs para gerenciamento de plataformas
+- name: Assinantes
+  description: APIs para gerenciamento de assinantes
+- name: Usuários
+  description: APIs para gerenciamento de usuários
+paths:
+  /usuarios/{id}:
+    get:
+      tags:
+      - Usuários
+      summary: Buscar usuário por ID
+      operationId: buscarUsuarioPorId
+      parameters:
+      - name: id
+        in: path
+        description: ID do usuário
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Usuário encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Usuario'
+      security:
+      - bearer-key: []
+    put:
+      tags:
+      - Usuários
+      summary: Atualizar usuário
+      operationId: atualizarUsuario
+      parameters:
+      - name: id
+        in: path
+        description: ID do usuário
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "201":
+          description: Usuário atualizado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Usuario'
+      security:
+      - bearer-key: []
+    delete:
+      tags:
+      - Usuários
+      summary: Excluir usuário
+      operationId: excluirUsuario
+      parameters:
+      - name: id
+        in: path
+        description: ID do usuário
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: Usuário excluído
+      security:
+      - bearer-key: []
+  /usuarios/{id}/senha:
+    put:
+      tags:
+      - Usuários
+      summary: Atualizar senha do usuário
+      operationId: atualizarSenha
+      parameters:
+      - name: id
+        in: path
+        description: ID do usuário
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: Senha atualizada
+      security:
+      - bearer-key: []
+  /usuarios/{id}/perfis:
+    put:
+      tags:
+      - Usuários
+      summary: Atualizar perfis do usuário
+      operationId: atualizarPerfis
+      parameters:
+      - name: id
+        in: path
+        description: ID do usuário
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: Perfis atualizados
+      security:
+      - bearer-key: []
+  /plataformas/{id}:
+    get:
+      tags:
+      - Plataformas
+      summary: Buscar plataforma
+      description: Retorna uma plataforma pelo ID
+      operationId: buscarPlataforma
+      parameters:
+      - name: id
+        in: path
+        description: ID da plataforma
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "200":
+          description: Plataforma encontrada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Plataforma'
+        "404":
+          description: Plataforma não encontrada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+    put:
+      tags:
+      - Plataformas
+      summary: Atualizar plataforma
+      description: Atualiza dados de uma plataforma existente
+      operationId: atualizarPlataforma
+      parameters:
+      - name: id
+        in: path
+        description: ID da plataforma
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plataforma'
+        required: true
+      responses:
+        "404":
+          description: Plataforma não encontrada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "201":
+          description: Plataforma atualizada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Plataforma'
+      security:
+      - bearer-key: []
+    delete:
+      tags:
+      - Plataformas
+      summary: Excluir plataforma
+      description: Remove uma plataforma pelo ID
+      operationId: excluirPlataforma
+      parameters:
+      - name: id
+        in: path
+        description: ID da plataforma
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "404":
+          description: Plataforma não encontrada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: Plataforma excluída
+      security:
+      - bearer-key: []
+  /pagamentos/{id}:
+    get:
+      tags:
+      - Pagamentos
+      summary: Consultar pagamento
+      description: Recupera um pagamento pelo ID
+      operationId: consultarPagamento
+      parameters:
+      - name: id
+        in: path
+        description: ID do pagamento
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 10
+      responses:
+        "200":
+          description: Pagamento encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pagamento'
+        "404":
+          description: Pagamento não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+    put:
+      tags:
+      - Pagamentos
+      summary: Atualizar pagamento
+      description: Atualiza um pagamento existente
+      operationId: atualizarPagamento
+      parameters:
+      - name: id
+        in: path
+        description: ID do pagamento
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 10
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pagamento'
+        required: true
+      responses:
+        "201":
+          description: Pagamento atualizado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pagamento'
+        "404":
+          description: Pagamento não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /assinantes/{id}:
+    get:
+      tags:
+      - Assinantes
+      summary: Buscar assinante
+      description: Retorna um assinante pelo ID
+      operationId: buscarAssinante
+      parameters:
+      - name: id
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "404":
+          description: Assinante não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Assinante encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Assinante'
+      security:
+      - bearer-key: []
+    put:
+      tags:
+      - Assinantes
+      summary: Atualizar assinante
+      description: Atualiza dados de um assinante existente
+      operationId: atualizarAssinante
+      parameters:
+      - name: id
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Assinante'
+        required: true
+      responses:
+        "201":
+          description: Assinante atualizado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Assinante'
+        "404":
+          description: Assinante não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+    delete:
+      tags:
+      - Assinantes
+      summary: Excluir assinante
+      description: Remove um assinante pelo ID
+      operationId: excluirAssinante
+      parameters:
+      - name: id
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "404":
+          description: Assinante não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: Assinante excluído
+      security:
+      - bearer-key: []
+  /usuarios:
+    get:
+      tags:
+      - Usuários
+      summary: Buscar usuário por email
+      operationId: buscarUsuarioPorEmail
+      parameters:
+      - name: email
+        in: query
+        description: Email do usuário
+        required: true
+        schema:
+          type: string
+        example: user@example.com
+      responses:
+        "404":
+          description: Usuário não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Usuário encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Usuario'
+      security:
+      - bearer-key: []
+    post:
+      tags:
+      - Usuários
+      summary: Cadastrar usuário
+      description: Cria um novo usuário
+      operationId: cadastrarUsuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "201":
+          description: Usuário criado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        "400":
+          description: Dados inválidos
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /plataformas:
+    get:
+      tags:
+      - Plataformas
+      summary: Listar plataformas
+      description: "Retorna lista paginada de plataformas, com filtro opcional por\
+        \ nome"
+      operationId: listarPlataformas
+      parameters:
+      - name: nome
+        in: query
+        description: Filtro por nome
+        required: false
+        schema:
+          type: string
+        example: Netflix
+      - name: pagina
+        in: query
+        description: Número da página (0..N)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: quantidade
+        in: query
+        description: Quantidade por página
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "500":
+          description: Erro interno
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            application/json: {}
+        "401":
+          description: Não autorizado
+      security:
+      - bearer-key: []
+    post:
+      tags:
+      - Plataformas
+      summary: Cadastrar plataforma
+      description: Cria uma nova plataforma
+      operationId: cadastrarPlataforma
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plataforma'
+        required: true
+      responses:
+        "201":
+          description: Plataforma criada
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Plataforma'
+        "400":
+          description: Dados inválidos
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /pagamentos:
+    get:
+      tags:
+      - Pagamentos
+      summary: Listar pagamentos
+      description: "Retorna lista paginada de pagamentos, com filtro opcional por\
+        \ nome do assinante"
+      operationId: listarPagamentos
+      parameters:
+      - name: nomeAssinante
+        in: query
+        description: Filtro por nome do assinante
+        required: false
+        schema:
+          type: string
+        example: João
+      - name: pagina
+        in: query
+        description: Número da página (0..N)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: quantidade
+        in: query
+        description: Quantidade por página
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "500":
+          description: Erro interno
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            '*/*':
+              schema:
+                type: object
+        "401":
+          description: Não autorizado
+      security:
+      - bearer-key: []
+    post:
+      tags:
+      - Pagamentos
+      summary: Registrar pagamento
+      description: Cria um novo pagamento
+      operationId: registrarPagamento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pagamento'
+        required: true
+      responses:
+        "201":
+          description: Pagamento criado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pagamento'
+        "400":
+          description: Dados inválidos
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /auth/logout:
+    post:
+      tags:
+      - Autenticação
+      summary: Logout
+      description: Finaliza a sessão do usuário atual
+      operationId: logout
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /auth/login:
+    post:
+      tags:
+      - Autenticação
+      summary: Login
+      description: Autentica o usuário e retorna um token JWT
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "401":
+          description: Credenciais inválidas
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Autenticado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /assinantes:
+    get:
+      tags:
+      - Assinantes
+      summary: Listar assinantes
+      description: "Retorna lista paginada de assinantes, com filtro opcional por\
+        \ nome"
+      operationId: listarAssinantes
+      parameters:
+      - name: nome
+        in: query
+        description: Filtro por nome
+        required: false
+        schema:
+          type: string
+        example: João
+      - name: pagina
+        in: query
+        description: Número da página (0..N)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: quantidade
+        in: query
+        description: Quantidade por página
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "500":
+          description: Erro interno
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            '*/*':
+              schema:
+                type: object
+        "401":
+          description: Não autorizado
+      security:
+      - bearer-key: []
+    post:
+      tags:
+      - Assinantes
+      summary: Cadastrar assinante
+      description: Cria um novo assinante
+      operationId: cadastrarAssinante
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Assinante'
+        required: true
+      responses:
+        "201":
+          description: Assinante criado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Assinante'
+        "400":
+          description: Dados inválidos
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /assinantes/{id}/associar-plataformas:
+    post:
+      tags:
+      - Assinantes
+      summary: Associar plataformas
+      description: Associa múltiplas plataformas a um assinante
+      operationId: associarPlataformas
+      parameters:
+      - name: id
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssociarPlataformasRequest'
+        required: true
+      responses:
+        "200":
+          description: Associação realizada
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: Assinante/Plataforma não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "400":
+          description: Erro de validação de negócio
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+  /pagamentos/assinante/{id}:
+    get:
+      tags:
+      - Pagamentos
+      summary: Listar pagamentos por assinante
+      description: Retorna lista paginada de pagamentos de um assinante
+      operationId: listarPagamentosAssinante
+      parameters:
+      - name: id
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: pagina
+        in: query
+        description: Número da página (0..N)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: quantidade
+        in: query
+        description: Quantidade por página
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "404":
+          description: Assinante não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+      - bearer-key: []
+  /assinantes/{assinanteId}/desassociar-plataforma/{plataformaId}:
+    delete:
+      tags:
+      - Assinantes
+      summary: Desassociar plataforma
+      description: Remove a associação de uma plataforma de um assinante
+      operationId: desassociarPlataforma
+      parameters:
+      - name: assinanteId
+        in: path
+        description: ID do assinante
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: plataformaId
+        in: path
+        description: ID da plataforma
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 2
+      responses:
+        "200":
+          description: Desassociação realizada
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: Assinante/Plataforma não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "400":
+          description: Erro de validação de negócio
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearer-key: []
+components:
+  schemas:
+    Usuario:
+      required:
+      - email
+      - nome
+      - perfis_id
+      - senha
+      - sobrenome
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador do usuário
+          format: int64
+          example: 42
+        nome:
+          type: string
+          description: Nome
+          example: Kaique
+        sobrenome:
+          type: string
+          description: Sobrenome
+          example: Miranda
+        email:
+          type: string
+          description: Email
+          example: kaique@example.com
+        senha:
+          type: string
+          description: Senha do usuário
+          writeOnly: true
+          example: S3nh@Segura
+        perfis_id:
+          type: array
+          description: IDs dos perfis do usuário
+          example:
+          - 1
+          - 2
+          items:
+            type: integer
+            description: IDs dos perfis do usuário
+            format: int64
+      description: Dados de um usuário do sistema
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: Data/hora do erro (UTC)
+          format: date-time
+        status:
+          type: integer
+          description: Código HTTP do erro
+          format: int32
+          example: 404
+        error:
+          type: string
+          description: Tipo de erro
+          example: VulpesException
+        message:
+          type: string
+          description: Mensagem explicativa do erro
+          example: Plataforma não encontrada
+        path:
+          type: string
+          description: Caminho da requisição
+          example: /plataformas/999
+      description: Estrutura padronizada de erros da API
+    Plataforma:
+      required:
+      - nome
+      - preco
+      - tipo_servico
+      - total_vagas
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador da plataforma
+          format: int64
+          example: 1
+        nome:
+          maxLength: 255
+          minLength: 3
+          type: string
+          description: Nome da plataforma
+          example: Netflix
+        preco:
+          minimum: 0.0
+          exclusiveMinimum: true
+          type: number
+          description: Preço mensal
+          example: 29.9
+        url:
+          type: string
+          description: URL oficial
+          example: https://netflix.com
+        tipo_servico:
+          type: string
+          description: Tipo de serviço de uma plataforma
+          example: STREAMING_VIDEO
+          enum:
+          - STREAMING_VIDEO
+          - STREAMING_MUSICA
+          - SOFTWARE
+          - JOGOS
+          - NOTICIAS
+          - CLOUD_STORAGE
+          - FITNESS
+        total_vagas:
+          minimum: 1
+          type: integer
+          description: Total de vagas
+          format: int32
+          example: 5
+        vagas_disponiveis:
+          type: integer
+          description: Vagas disponíveis
+          format: int32
+          example: 5
+        cadastrado_em:
+          type: string
+          description: Data de criação
+          format: date-time
+        atualizado_em:
+          type: string
+          description: Data de atualização
+          format: date-time
+        excluido_em:
+          type: string
+          description: Data de exclusão (soft delete)
+          format: date-time
+      description: Dados de uma plataforma de serviço
+    Pagamento:
+      required:
+      - assinante_id
+      - data_pagamento
+      - meses_cobertos
+      - valor_pago
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador do pagamento
+          format: int64
+          example: 10
+        assinante_id:
+          type: integer
+          description: ID do assinante
+          format: int64
+          example: 1
+        valor_pago:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+          description: Valor pago
+          example: 59.8
+        meses_cobertos:
+          minimum: 1
+          type: integer
+          description: Quantidade de meses cobertos
+          format: int32
+          example: 2
+        meses:
+          type: array
+          description: Meses de referência
+          example:
+          - 2024-07
+          - 2024-08
+          items:
+            type: string
+            description: Meses de referência
+            example: "[\"2024-07\",\"2024-08\"]"
+        data_pagamento:
+          type: string
+          description: Data do pagamento
+          format: date-time
+        cadastrado_em:
+          type: string
+          description: Data de criação
+          format: date-time
+        atualizado_em:
+          type: string
+          description: Data de atualização
+          format: date-time
+        excluido_em:
+          type: string
+          description: Data de exclusão (soft delete)
+          format: date-time
+      description: Dados de um pagamento
+    Assinante:
+      required:
+      - email
+      - nome
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador do assinante
+          format: int64
+          example: 1
+        nome:
+          type: string
+          description: Nome do assinante
+          example: João Silva
+        email:
+          type: string
+          description: Email do assinante
+          example: joao@email.com
+        plataformas_associadas:
+          type: array
+          description: Plataformas associadas ao assinante
+          items:
+            $ref: '#/components/schemas/PlataformaResumo'
+        valor_por_mes:
+          type: number
+          description: Custo mensal estimado
+          example: 29.9
+        cadastrado_em:
+          type: string
+          description: Data de criação
+          format: date-time
+        atualizado_em:
+          type: string
+          description: Data de atualização
+          format: date-time
+        excluido_em:
+          type: string
+          description: Data de exclusão (soft delete)
+          format: date-time
+      description: Dados de um assinante
+    PlataformaResumo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID da plataforma
+          format: int64
+          example: 1
+        nome:
+          type: string
+          description: Nome da plataforma
+          example: Netflix
+        precoMensal:
+          type: number
+          description: Preço mensal total
+          example: 29.9
+        precoIndividual:
+          type: number
+          description: Preço individual por assinante
+          example: 9.97
+      description: Resumo de plataforma associada ao assinante
+    LoginRequest:
+      required:
+      - email
+      - senha
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email do usuário
+          example: user@example.com
+        senha:
+          type: string
+          description: Senha do usuário
+          writeOnly: true
+          example: S3nh@F0rte
+      description: Credenciais para autenticação
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      description: Resposta de autenticação com JWT
+    AssociarPlataformasRequest:
+      type: object
+      properties:
+        plataformaIds:
+          type: array
+          description: IDs das plataformas
+          example:
+          - 1
+          - 2
+          - 3
+          items:
+            type: integer
+            description: IDs das plataformas
+            format: int64
+      description: Requisição para associar plataformas a um assinante
+  securitySchemes:
+    bearer-key:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
