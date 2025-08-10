@@ -9,10 +9,12 @@ import io.github.vulpes.infrastructure.jpa.AssinantePlataformaRepository;
 import io.github.vulpes.infrastructure.jpa.AssinanteRepository;
 import io.github.vulpes.infrastructure.jpa.PlataformaRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,10 +26,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AssinanteServiceTest {
 
     @Mock
@@ -36,160 +38,288 @@ class AssinanteServiceTest {
     private PlataformaRepository plataformaRepository;
     @Mock
     private AssinantePlataformaRepository assinantePlataformaRepository;
-
+    @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
     private AssinanteServiceImpl assinanteService;
 
+    private Assinante assinante;
+    private AssinanteDTO assinanteDTO;
+    private Plataforma plataforma;
+
     @BeforeEach
-    public void init() {
-        MockitoAnnotations.openMocks(this);
-        modelMapper = new ModelMapper();
-        assinanteService = new AssinanteServiceImpl(assinanteRepository, plataformaRepository, assinantePlataformaRepository);
+    void setUp() {
+        setupTestData();
+    }
+
+    private void setupTestData() {
+        assinante = new Assinante();
+        assinante.setId(1L);
+        assinante.setNome("João Silva");
+        assinante.setEmail("joao@email.com");
+
+        assinanteDTO = new AssinanteDTO();
+        assinanteDTO.setId(1L);
+        assinanteDTO.setNome("João Silva");
+        assinanteDTO.setEmail("joao@email.com");
+        assinanteDTO.setPlataformasAssociadas(new ArrayList<>());
+        assinanteDTO.setValorPorMes(BigDecimal.ZERO);
+
+        plataforma = new Plataforma();
+        plataforma.setId(1L);
+        plataforma.setNome("Netflix");
+        plataforma.setPreco(new BigDecimal("29.90"));
+        plataforma.setVagasDisponiveis(5);
+        plataforma.setTotalVagas(5);
     }
 
 
     @Test
-    void testBuscarAssinante() {
-        Long id = 1L;
-        Assinante assinante = new Assinante();
-        assinante.setId(id);
-        assinante.setNome("João");
-
-        when(assinanteRepository.findById(id)).thenReturn(Optional.of(assinante));
-        when(assinantePlataformaRepository.findPlataformaIdsByAssinanteId(id)).thenReturn(new ArrayList<>());
+    @DisplayName("Should return AssinanteDTO when assinante exists")
+    void testBuscarAssinante_Success() {
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
+        when(assinantePlataformaRepository.findPlataformaIdsByAssinanteId(1L)).thenReturn(new ArrayList<>());
         when(plataformaRepository.findAllById(new ArrayList<>())).thenReturn(new ArrayList<>());
+        when(modelMapper.map(assinante, AssinanteDTO.class)).thenReturn(assinanteDTO);
 
-        AssinanteDTO resultDto = assinanteService.buscarAssinante(id);
+        AssinanteDTO result = assinanteService.buscarAssinante(1L);
 
-        assertEquals(id, resultDto.getId());
-        assertEquals("João", resultDto.getNome());
-        assertTrue(resultDto.getPlataformasAssociadas().isEmpty());
-        assertEquals(BigDecimal.ZERO, resultDto.getValorPorMes());
+        assertNotNull(result);
+        assertEquals(assinante.getId(), result.getId());
+        assertEquals(assinante.getNome(), result.getNome());
+        assertEquals(assinante.getEmail(), result.getEmail());
+        assertTrue(result.getPlataformasAssociadas().isEmpty());
+        assertEquals(BigDecimal.ZERO, result.getValorPorMes());
+        
+        verify(assinanteRepository).findById(1L);
+        verify(assinantePlataformaRepository).findPlataformaIdsByAssinanteId(1L);
     }
 
     @Test
-    void testListarAssinantes() {
-        // Criar dados de teste
-        Assinante assinante1 = new Assinante();
-        assinante1.setId(1L);
-        assinante1.setNome("João");
+    @DisplayName("Should throw VulpesException when assinante not found")
+    void testBuscarAssinante_NotFound() {
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.empty());
 
+        assertThrows(RuntimeException.class, () -> assinanteService.buscarAssinante(1L));
+        
+        verify(assinanteRepository).findById(1L);
+        verifyNoInteractions(assinantePlataformaRepository, plataformaRepository);
+    }
+
+    @Test
+    @DisplayName("Should return paginated list of AssinanteDTO")
+    void testListarAssinantes_Success() {
         Assinante assinante2 = new Assinante();
         assinante2.setId(2L);
-        assinante2.setNome("Maria");
+        assinante2.setNome("Maria Santos");
+        assinante2.setEmail("maria@email.com");
 
-        List<Assinante> assinantes = Arrays.asList(assinante1, assinante2);
-
-        // Criar uma página mockada
+        List<Assinante> assinantes = Arrays.asList(assinante, assinante2);
         Page<Assinante> page = new PageImpl<>(assinantes);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        // Mockar o repositório para retornar a página mockada
-        when(assinanteRepository.findAssinante("", PageRequest.of(0, 10))).thenReturn(page);
+        when(assinanteRepository.findAssinante("", pageRequest)).thenReturn(page);
+        when(modelMapper.map(assinante, AssinanteDTO.class)).thenReturn(assinanteDTO);
+        when(modelMapper.map(assinante2, AssinanteDTO.class)).thenReturn(createAssinanteDTO(2L, "Maria Santos"));
 
-        // Chamar o método a ser testado
-        Page<AssinanteDTO> result = assinanteService.listarAssinantes("", PageRequest.of(0, 10));
+        Page<AssinanteDTO> result = assinanteService.listarAssinantes("", pageRequest);
 
-        // Verificar se o resultado está correto
+        assertNotNull(result);
         assertEquals(2, result.getContent().size());
-        assertEquals("João", result.getContent().get(0).getNome());
-        assertEquals("Maria", result.getContent().get(1).getNome());
+        assertEquals("João Silva", result.getContent().get(0).getNome());
+        assertEquals("Maria Santos", result.getContent().get(1).getNome());
+        assertEquals(2, result.getTotalElements());
+        
+        verify(assinanteRepository).findAssinante("", pageRequest);
     }
 
     @Test
-    void testCadastrarAssinante() {
-        // Criar um DTO de entrada
-        AssinanteDTO inputDto = new AssinanteDTO();
-        inputDto.setNome("João");
-        // ... (defina outros campos conforme necessário)
+    @DisplayName("Should return empty page when no assinantes found")
+    void testListarAssinantes_Empty() {
+        Page<Assinante> emptyPage = new PageImpl<>(new ArrayList<>());
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        // Mockar o comportamento do repositório
+        when(assinanteRepository.findAssinante("nonexistent", pageRequest)).thenReturn(emptyPage);
+
+        Page<AssinanteDTO> result = assinanteService.listarAssinantes("nonexistent", pageRequest);
+
+        assertNotNull(result);
+        assertTrue(result.getContent().isEmpty());
+        assertEquals(0, result.getTotalElements());
+        
+        verify(assinanteRepository).findAssinante("nonexistent", pageRequest);
+    }
+
+    private AssinanteDTO createAssinanteDTO(Long id, String nome) {
+        AssinanteDTO dto = new AssinanteDTO();
+        dto.setId(id);
+        dto.setNome(nome);
+        dto.setEmail("maria@email.com");
+        dto.setPlataformasAssociadas(new ArrayList<>());
+        dto.setValorPorMes(BigDecimal.ZERO);
+        return dto;
+    }
+
+    @Test
+    @DisplayName("Should successfully create new assinante")
+    void testCadastrarAssinante_Success() {
+        AssinanteDTO inputDto = new AssinanteDTO();
+        inputDto.setNome("João Silva");
+        inputDto.setEmail("joao@email.com");
+
+        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(assinante);
         when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> {
             Assinante a = invocation.getArgument(0);
             a.setId(1L);
             return a;
         });
+        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenReturn(assinanteDTO);
 
-        // Chamar o método a ser testado
-        AssinanteDTO resultDto = assinanteService.cadastrarAssinante(inputDto);
+        AssinanteDTO result = assinanteService.cadastrarAssinante(inputDto);
 
-        // Verificar se o resultado está correto
-        assertEquals("João", resultDto.getNome());
-        assertEquals(1L, resultDto.getId());
+        assertNotNull(result);
+        assertEquals("João Silva", result.getNome());
+        assertEquals("joao@email.com", result.getEmail());
+        assertEquals(1L, result.getId());
+        
+        verify(assinanteRepository).save(any(Assinante.class));
     }
 
     @Test
-    void testAtualizarAssinante(){
-        Long id = 1L;
+    @DisplayName("Should throw exception when saving assinante with null data")
+    void testCadastrarAssinante_NullData() {
+        AssinanteDTO inputDto = new AssinanteDTO();
+        inputDto.setNome(null);
+
+        when(modelMapper.map(inputDto, Assinante.class)).thenReturn(new Assinante());
+        when(assinanteRepository.save(any(Assinante.class))).thenThrow(new RuntimeException("Invalid data"));
+
+        assertThrows(RuntimeException.class, () -> assinanteService.cadastrarAssinante(inputDto));
+        
+        verify(assinanteRepository).save(any(Assinante.class));
+    }
+
+    @Test
+    @DisplayName("Should successfully update existing assinante")
+    void testAtualizarAssinante_Success() {
+        AssinanteDTO inputDto = new AssinanteDTO();
+        inputDto.setNome("João Atualizado");
+        inputDto.setEmail("joao.updated@email.com");
+
+        Assinante updatedAssinante = new Assinante();
+        updatedAssinante.setId(1L);
+        updatedAssinante.setNome("João Atualizado");
+        updatedAssinante.setEmail("joao.updated@email.com");
+
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
+        when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenReturn(inputDto);
+
+        AssinanteDTO result = assinanteService.atualizarAssinante(1L, inputDto);
+
+        assertNotNull(result);
+        assertEquals("João Atualizado", result.getNome());
+        assertEquals("joao.updated@email.com", result.getEmail());
+        
+        verify(assinanteRepository).findById(1L);
+        verify(assinanteRepository).save(any(Assinante.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating non-existent assinante")
+    void testAtualizarAssinante_NotFound() {
         AssinanteDTO inputDto = new AssinanteDTO();
         inputDto.setNome("João");
 
-        Assinante expectedAssinante = new Assinante();
-        expectedAssinante.setId(id);
-        expectedAssinante.setNome("João");
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.empty());
 
-        when(assinanteRepository.findById(id)).thenReturn(Optional.of(expectedAssinante));
-        when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        AssinanteDTO resultDto = assinanteService.atualizarAssinante(id, inputDto);
-
-        assertEquals(id, resultDto.getId());
-        assertEquals("João", resultDto.getNome());
-
+        assertThrows(RuntimeException.class, () -> assinanteService.atualizarAssinante(1L, inputDto));
+        
+        verify(assinanteRepository).findById(1L);
+        verify(assinanteRepository, never()).save(any(Assinante.class));
     }
 
     @Test
-    void testExcluirAssinante(){
-        Long id = 1L;
+    @DisplayName("Should successfully delete existing assinante")
+    void testExcluirAssinante_Success() {
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
+        doNothing().when(assinanteRepository).deleteAssinante(1L);
 
-        // Arrange
-        Assinante existingAssinante = new Assinante();
-        existingAssinante.setId(id);
-        existingAssinante.setNome("João");
-
-        when(assinanteRepository.findById(id)).thenReturn(Optional.of(existingAssinante));
-
-
-        // Act
-        assinanteService.excluirAssinante(id);
-
-        // Assert
-        verify(assinanteRepository).deleteAssinante(id);
+        assertDoesNotThrow(() -> assinanteService.excluirAssinante(1L));
+        
+        verify(assinanteRepository).findById(1L);
+        verify(assinanteRepository).deleteAssinante(1L);
     }
 
     @Test
-    void testAssociarPlataformas() {
-        Long assinanteId = 1L;
+    @DisplayName("Should throw exception when deleting non-existent assinante")
+    void testExcluirAssinante_NotFound() {
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> assinanteService.excluirAssinante(1L));
+        
+        verify(assinanteRepository).findById(1L);
+        verify(assinanteRepository, never()).deleteAssinante(1L);
+    }
+
+    @Test
+    @DisplayName("Should successfully associate platforms with assinante")
+    void testAssociarPlataformas_Success() {
         List<Long> plataformaIds = Arrays.asList(1L, 2L);
-
-        Assinante assinante = new Assinante();
-        assinante.setId(assinanteId);
-
-        Plataforma plataforma1 = new Plataforma();
-        plataforma1.setId(1L);
-        plataforma1.setVagasDisponiveis(3);
 
         Plataforma plataforma2 = new Plataforma();
         plataforma2.setId(2L);
+        plataforma2.setNome("Prime Video");
         plataforma2.setVagasDisponiveis(2);
+        plataforma2.setTotalVagas(3);
 
-        // Mockar o comportamento dos repositórios
-        when(assinanteRepository.findById(assinanteId)).thenReturn(Optional.of(assinante));
-        when(plataformaRepository.findById(1L)).thenReturn(Optional.of(plataforma1));
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
+        when(plataformaRepository.findById(1L)).thenReturn(Optional.of(plataforma));
         when(plataformaRepository.findById(2L)).thenReturn(Optional.of(plataforma2));
+        when(plataformaRepository.save(any(Plataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(assinantePlataformaRepository.save(any(AssinantePlataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Chamar o método a ser testado
-        assinanteService.associarPlataformas(assinanteId, plataformaIds);
+        assertDoesNotThrow(() -> assinanteService.associarPlataformas(1L, plataformaIds));
 
-        // Verificar se os métodos corretos foram chamados nos repositórios
-        verify(plataformaRepository).save(plataforma1);
-        verify(plataformaRepository).save(plataforma2);
+        verify(assinanteRepository).findById(1L);
+        verify(plataformaRepository).findById(1L);
+        verify(plataformaRepository).findById(2L);
+        verify(plataformaRepository, times(2)).save(any(Plataforma.class));
         verify(assinantePlataformaRepository, times(2)).save(any(AssinantePlataforma.class));
 
-        // Verificar se as vagas disponíveis foram decrementadas
-        assertEquals(2, plataforma1.getVagasDisponiveis());
+        assertEquals(4, plataforma.getVagasDisponiveis());
         assertEquals(1, plataforma2.getVagasDisponiveis());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when assinante not found for association")
+    void testAssociarPlataformas_AssinanteNotFound() {
+        List<Long> plataformaIds = Arrays.asList(1L, 2L);
+
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> assinanteService.associarPlataformas(1L, plataformaIds));
+        
+        verify(assinanteRepository).findById(1L);
+        verifyNoInteractions(plataformaRepository, assinantePlataformaRepository);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when platform has no available slots")
+    void testAssociarPlataformas_NoAvailableSlots() {
+        List<Long> plataformaIds = Arrays.asList(1L);
+        plataforma.setVagasDisponiveis(0);
+
+        when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
+        when(plataformaRepository.findById(1L)).thenReturn(Optional.of(plataforma));
+
+        assertThrows(RuntimeException.class, () -> assinanteService.associarPlataformas(1L, plataformaIds));
+        
+        verify(assinanteRepository).findById(1L);
+        verify(plataformaRepository).findById(1L);
+        verify(plataformaRepository, never()).save(any(Plataforma.class));
+        verify(assinantePlataformaRepository, never()).save(any(AssinantePlataforma.class));
     }
 
     @Test

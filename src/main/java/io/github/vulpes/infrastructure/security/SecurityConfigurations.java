@@ -22,6 +22,9 @@ public class SecurityConfigurations {
 
     private final SecurityFilter securityFilter;
 
+    @Value("${security.disabled:false}")
+    private boolean securityDisabled;
+
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
     @Value("${cors.allowed-methods}")
@@ -37,6 +40,14 @@ public class SecurityConfigurations {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        if (securityDisabled) {
+            return http
+                    .csrf().disable()
+                    .authorizeHttpRequests().anyRequest().permitAll()
+                    .and()
+                    .build();
+        }
+
         return http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests()

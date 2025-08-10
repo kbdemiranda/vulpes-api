@@ -38,7 +38,7 @@ class UsuarioServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        usuarioService = new UsuarioServiceImpl(usuarioRepository, perfilRepository);
+        usuarioService = new UsuarioServiceImpl(usuarioRepository, perfilRepository, passwordEncoder);
     }
 
     @Test

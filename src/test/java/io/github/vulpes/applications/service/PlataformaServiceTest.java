@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -72,7 +72,7 @@ class PlataformaServiceTest {
         dto.setNome("Netflix");
         dto.setPreco(BigDecimal.TEN);
         dto.setUrl("http://netflix.com");
-        dto.setTipoServico(TipoServico.STREAMING);
+        dto.setTipoServico(TipoServico.STREAMING_VIDEO);
         dto.setTotalVagas(2);
 
         when(plataformaRepository.save(any(Plataforma.class))).thenAnswer(invocation -> {
@@ -87,10 +87,23 @@ class PlataformaServiceTest {
         verify(plataformaRepository).save(captor.capture());
         Plataforma saved = captor.getValue();
 
+        // Verify the entity that was saved
         assertEquals(dto.getNome(), saved.getNome());
-        assertEquals(dto.getTotalVagas(), saved.getVagasDisponiveis());
-        assertEquals(dto.getId(), result.getId());
+        assertEquals(dto.getPreco(), saved.getPreco());
+        assertEquals(dto.getUrl(), saved.getUrl());
+        assertEquals(dto.getTipoServico(), saved.getTipoServico());
+        assertEquals(dto.getTotalVagas(), saved.getTotalVagas());
+        assertEquals(dto.getTotalVagas(), saved.getVagasDisponiveis()); // vagasDisponiveis should equal totalVagas initially
+        assertNotNull(saved.getCadastradoEm());
+
+        // Verify the returned DTO
+        assertNotNull(result);
+        assertEquals(1L, result.getId()); // ID should be set by the mock
         assertEquals(dto.getNome(), result.getNome());
+        assertEquals(dto.getPreco(), result.getPreco());
+        assertEquals(dto.getUrl(), result.getUrl());
+        assertEquals(dto.getTipoServico(), result.getTipoServico());
+        assertEquals(dto.getTotalVagas(), result.getTotalVagas());
     }
 
     @Test
@@ -103,7 +116,7 @@ class PlataformaServiceTest {
         dto.setNome("Novo");
         dto.setPreco(BigDecimal.TEN);
         dto.setUrl("http://teste.com");
-        dto.setTipoServico(TipoServico.STREAMING);
+        dto.setTipoServico(TipoServico.STREAMING_VIDEO);
         dto.setTotalVagas(3);
 
         PlataformaDTO result = plataformaService.atualizarPlataforma(1L, dto);
