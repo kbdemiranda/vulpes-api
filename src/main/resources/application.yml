@@ -6,9 +6,9 @@ spring:
     name: Vulpes
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${DBUSERNAME:postgres}
-    password: ${DBPASSWORD:postgres}
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/dev}
+    username: ${DBUSERNAME}
+    password: ${DBPASSWORD}
+    url: ${DATABASE_URL}
   flyway:
     default-schema: vulpes
   jpa:
@@ -17,10 +17,10 @@ spring:
       hibernate:
         default_schema: vulpes
         format_sql: true
-CORS:
-  allowed-origins: ${CORSALLOWEDORIGINS:http://localhost:4200}
+cors:
+  allowed-origins: ${CORSALLOWEDORIGINS:http://localhost:3000}
   allowed-methods: ${CORSALLOWEDMETHODS:GET,POST,PUT,DELETE,OPTIONS}
-  allowed-headers: ${CORSALLOWEDHEADERS:Authorization,Content-Type}
+  allowed-headers: ${CORSALLOWEDHEADERS:*}
   exposed-headers: ${CORSEXPOSEDHEADERS:Authorization}
   allow-credentials: ${CORSALLOWCREDENTIALS:true}
   max-age: ${CORSMAXAGE:3600}

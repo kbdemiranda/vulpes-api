@@ -4,15 +4,18 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 @EqualsAndHashCode(of = "id")
-
 @Entity
 @Table(name = "assinantes", schema = "vulpes")
+@SQLDelete(sql = "UPDATE vulpes.assinantes SET excluido_em = now() WHERE id = ?")
+@Where(clause = "excluido_em IS NULL")
 public class Assinante {
 
     @Id
