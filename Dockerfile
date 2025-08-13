@@ -1,17 +1,28 @@
-# Usar a imagem oficial do OpenJDK
-FROM openjdk:11-jre-slim
-
-# Informações sobre o mantenedor
-LABEL maintainer="kbdemiranda@hotmail.com"
-
-# Defina o diretório de trabalho no container
+# ========= STAGE 1: BUILD =========
+FROM maven:3.9-eclipse-temurin-11 AS builder
 WORKDIR /app
 
-# Copiar o JAR para o container
-COPY ./target/vulpes-0.0.1-SNAPSHOT.jar /app/app.jar
+# Cache de dependências
+COPY pom.xml .
+RUN mvn -q -B -DskipTests dependency:go-offline
 
-# Executar o JAR
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Código-fonte
+COPY src ./src
+RUN mvn -q -B -DskipTests package
 
-# Expor a porta 8080 para acessar a aplicação
+# ========= STAGE 2: RUNTIME =========
+FROM eclipse-temurin:11-jre
+WORKDIR /app
+
+# Copia o JAR gerado do build
+# (pega o único SNAPSHOT produzido)
+COPY --from=builder /app/target/*SNAPSHOT.jar /app/app.jar
+
+# Render injeta a variável $PORT — force o Spring a usá-la
+ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT}"
+
+# Porta padrão local (informativa)
 EXPOSE 8080
+
+# Sobe a aplicação
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
