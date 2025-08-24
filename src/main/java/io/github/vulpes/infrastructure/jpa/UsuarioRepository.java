@@ -9,11 +9,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
+
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     Optional<Usuario> findByEmail(String email);
 
-    @Query("update Usuario u set u.excluidoEm = now() where u.id = :id")
-    @Modifying
-    void deleteUsuario(@Param("id") Long id);
+    @Query("update Usuario u set u.excluidoEm = CURRENT_TIMESTAMP where u.id = :id")
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    int deleteUsuario(@Param("id") Long id);
 }
