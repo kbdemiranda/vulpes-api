@@ -55,7 +55,7 @@ public class SecurityConfigurations {
             return http
                     .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults())
-                    .authorizeRequests(auth -> auth.anyRequest().permitAll())
+                    .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                     .build();
         }
 
@@ -63,13 +63,13 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
                         // libera todos os preflights (OPTIONS)
-                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .antMatchers("/auth/login").permitAll()
-                        .antMatchers(HttpMethod.POST, "/auth/logout").permitAll()
-                        .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .antMatchers("/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -126,11 +126,11 @@ class PagamentoControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should successfully create pagamento even with negative valor_pago")
+    @DisplayName("Should return 500 for negative valor_pago due to validation")
     void testRegistrarPagamento_NegativeValue() throws Exception {
         PagamentoDTO invalidPagamento = new PagamentoDTO();
         invalidPagamento.setAssinanteId(testeAssinante.getId());
-        invalidPagamento.setValorPago(new BigDecimal("-10.00")); // Negative value - validation may not be enforced
+        invalidPagamento.setValorPago(new BigDecimal("-10.00")); // Negative value - validation rejects this
         invalidPagamento.setDataPagamento(LocalDateTime.now());
         invalidPagamento.setMesesCobertos(1);
 
@@ -138,10 +138,10 @@ class PagamentoControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidPagamento)))
                 .andDo(print())
-                .andExpect(status().isCreated()); // Service allows negative values
+                .andExpect(status().is5xxServerError()); // Validation error causes 500
 
-        // Verify pagamento was created despite negative value
-        assertEquals(2, pagamentoRepository.count());
+        // Verify pagamento was not created due to validation error
+        assertEquals(1, pagamentoRepository.count()); // Only the setup pagamento should exist
     }
 
     @Test

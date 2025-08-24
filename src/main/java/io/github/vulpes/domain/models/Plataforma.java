@@ -3,7 +3,7 @@ package io.github.vulpes.domain.models;
 import io.github.vulpes.domain.enums.TipoServico;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
