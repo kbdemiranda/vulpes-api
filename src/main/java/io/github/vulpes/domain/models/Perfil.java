@@ -1,9 +1,6 @@
 package io.github.vulpes.domain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.persistence.*;
@@ -13,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(of = "id")
-
+@ToString(exclude = "usuarios")
 @Entity
 @Table(name = "perfis", schema = "vulpes")
 public class Perfil implements GrantedAuthority {
