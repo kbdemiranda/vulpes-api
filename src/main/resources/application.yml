@@ -6,8 +6,8 @@ spring:
     name: Vulpes
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${DBUSERNAME}
-    password: ${DBPASSWORD}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     url: ${DATABASE_URL}
   flyway:
     default-schema: vulpes
