@@ -19,27 +19,23 @@ services:
   backend:
     hostname: backend
     container_name: vulpes-api
-    image: kbdemirnada/vulpes-api:openjdk-11
+    build: .
+    # If you prefer a prebuilt image, publish from this repo's Dockerfile with JDK17 and set `image:` here
+    # image: your-registry/vulpes-api:jdk17
     ports:
       - "9090:8080"
     environment:
       HOSTNAME: backend
       SPRING_APPLICATION_NAME: Vulpes
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_DATASOURCE_USERNAME: SysVulpes
-      SPRING_DATASOURCE_PASSWORD: r2*dNN*26E96
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/vulpes
-      SPRING_FLYWAY_DEFAULT_SCHEMA: vulpes
-      SPRING_JPA_SHOW_SQL: 'true'
-      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: vulpes
-      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: 'true'
-      SERVER_SERVLET_CONTEXT_PATH: /api
+      DATABASE_USERNAME: SysVulpes
+      DATABASE_PASSWORD: r2*dNN*26E96
+      DATABASE_URL: jdbc:postgresql://db:5432/vulpes
       CORSALLOWEDORIGINS: 'http://frontend:4200'
       CORSALLOWEDMETHODS: GET,POST,PUT,DELETE
       CORSALLOWEDHEADERS: Authorization,Content-Type
       CORSEXPOSEDHEADERS: Authorization
       CORSALLOWCREDENTIALS: 'true'
-      JWT_SECRET: ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722
+      JWTSECRET: ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722
     depends_on:
       - db
     networks:

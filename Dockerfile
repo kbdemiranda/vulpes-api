@@ -1,5 +1,5 @@
 # ========= STAGE 1: BUILD =========
-FROM maven:3.9-eclipse-temurin-11 AS builder
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Cache de dependências
@@ -11,14 +11,14 @@ COPY src ./src
 RUN mvn -q -B -DskipTests package
 
 # ========= STAGE 2: RUNTIME =========
-FROM eclipse-temurin:11-jre
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # Copia o JAR gerado do build
 # (pega o único SNAPSHOT produzido)
 COPY --from=builder /app/target/*SNAPSHOT.jar /app/app.jar
 
-# Render injeta a variável $PORT — force o Spring a usá-la
+# Plataformas como Render/Heroku injetam $PORT — força o Spring a usá-la
 ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT}"
 
 # Porta padrão local (informativa)
