@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
 @Schema(name = "Usuario", description = "Dados de um usuário do sistema")
-public class UsuarioDTO {
+public class UserDTO {
 
     @Schema(description = "Identificador do usuário", example = "42")
     @JsonProperty(value = "id")
@@ -39,16 +39,16 @@ public class UsuarioDTO {
     @NotBlank(message = "O email não pode ser vazio")
     @Email(message = "Email inválido")
     private String email;
-    @Schema(description = "Senha do usuário", example = "S3nh@Segura", accessMode = Schema.AccessMode.WRITE_ONLY)
+    @Schema(description = "User password", example = "S3nh@Segura", accessMode = Schema.AccessMode.WRITE_ONLY)
     @JsonProperty(value = "senha")
-    @NotBlank(message = "A senha não pode ser vazia")
-    private String senha;
-    @Schema(description = "IDs dos perfis do usuário", example = "[1,2]")
+    @NotBlank(message = "Password cannot be empty")
+    private String password;
+    @Schema(description = "User profile IDs", example = "[1,2]")
     @JsonProperty(value = "perfis_id")
-    @NotNull(message = "O usuário deve ter pelo menos um perfil")
-    private List<Long> perfisId;
+    @NotNull(message = "User must have at least one profile")
+    private List<Long> profilesId;
 
-    public UsuarioDTO(Usuario usuario) {
+    public UserDTO(Usuario usuario) {
         this.id = usuario.getId();
         this.nome = usuario.getNome();
         this.sobrenome = usuario.getSobrenome();

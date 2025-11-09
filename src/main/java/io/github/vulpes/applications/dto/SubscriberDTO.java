@@ -16,39 +16,39 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Data
 @JsonInclude(NON_NULL)
 @Schema(name = "Assinante", description = "Dados de um assinante")
-public class AssinanteDTO {
+public class SubscriberDTO {
 
     @Schema(description = "Identificador do assinante", example = "1")
     @JsonProperty(value = "id", index = 0)
     private Long id;
 
-    @NotBlank(message = "O nome não pode ser vazio")
-    @Schema(description = "Nome do assinante", example = "João Silva")
+    @NotBlank(message = "Name cannot be empty")
+    @Schema(description = "Subscriber name", example = "João Silva")
     @JsonProperty(value = "nome", index = 1)
-    private String nome;
+    private String name;
 
-    @NotBlank(message = "O email não pode ser vazio")
-    @Email(message = "Email inválido")
-    @Schema(description = "Email do assinante", example = "joao@email.com")
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email")
+    @Schema(description = "Subscriber email", example = "joao@email.com")
     @JsonProperty(value = "email", index = 2)
     private String email;
 
-    @Schema(description = "Plataformas associadas ao assinante")
+    @Schema(description = "Associated platforms")
     @JsonProperty(value = "plataformas_associadas", index = 3)
-    private List<PlataformaResumoDTO> plataformasAssociadas;
+    private List<PlatformSummaryDTO> associatedPlatforms;
 
-    @Schema(description = "Custo mensal estimado", example = "29.90")
+    @Schema(description = "Estimated monthly cost", example = "29.90")
     @JsonProperty(value = "valor_por_mes", index = 4)
-    private BigDecimal valorPorMes;
+    private BigDecimal amountPerMonth;
 
-    @Schema(description = "Data de criação", example = "2024-08-01T10:00:00")
+    @Schema(description = "Creation date", example = "2024-08-01T10:00:00")
     @JsonProperty(value = "cadastrado_em", index = 5)
-    private LocalDateTime cadastradoEm;
-    @Schema(description = "Data de atualização", example = "2024-08-02T10:00:00")
+    private LocalDateTime registeredAt;
+    @Schema(description = "Update date", example = "2024-08-02T10:00:00")
     @JsonProperty(value = "atualizado_em", index = 6)
-    private LocalDateTime atualizadoEm;
-    @Schema(description = "Data de exclusão (soft delete)", example = "2024-08-03T10:00:00")
+    private LocalDateTime updatedAt;
+    @Schema(description = "Deletion date (soft delete)", example = "2024-08-03T10:00:00")
     @JsonProperty(value = "excluido_em", index = 7)
-    private LocalDateTime excluidoEm;
+    private LocalDateTime deletedAt;
 
 }

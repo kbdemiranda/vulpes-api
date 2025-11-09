@@ -1,10 +1,10 @@
 package io.github.vulpes.applications.service;
 
-import io.github.vulpes.applications.dto.PlataformaDTO;
-import io.github.vulpes.applications.service.impl.PlataformaServiceImpl;
+import io.github.vulpes.applications.dto.PlatformDTO;
+import io.github.vulpes.applications.service.impl.PlatformServiceImpl;
 import io.github.vulpes.domain.enums.TipoServico;
 import io.github.vulpes.domain.models.Plataforma;
-import io.github.vulpes.infrastructure.jpa.PlataformaRepository;
+import io.github.vulpes.infrastructure.jpa.PlatformRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,17 +28,17 @@ import static org.mockito.Mockito.*;
 class PlataformaServiceTest {
 
     @Mock
-    private PlataformaRepository plataformaRepository;
+    private PlatformRepository plataformaRepository;
 
     @InjectMocks
-    private PlataformaServiceImpl plataformaService;
+    private PlatformServiceImpl plataformaService;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        plataformaService = new PlataformaServiceImpl(plataformaRepository);
+        plataformaService = new PlatformServiceImpl(plataformaRepository);
     }
 
     @Test
@@ -50,8 +50,8 @@ class PlataformaServiceTest {
 
         when(plataformaRepository.findPlataforma("", PageRequest.of(0, 10))).thenReturn(page);
 
-        Page<PlataformaDTO> expected = page.map(plataforma -> modelMapper.map(plataforma, PlataformaDTO.class));
-        Page<PlataformaDTO> result = plataformaService.listarPlataformas("", PageRequest.of(0, 10));
+        Page<PlatformDTO> expected = page.map(plataforma -> modelMapper.map(plataforma, PlatformDTO.class));
+        Page<PlatformDTO> result = plataformaService.listarPlataformas("", PageRequest.of(0, 10));
 
         assertEquals(expected, result);
     }
@@ -61,14 +61,14 @@ class PlataformaServiceTest {
         Plataforma plataforma = Plataforma.builder().id(1L).nome("Netflix").preco(BigDecimal.TEN).build();
         when(plataformaRepository.findById(1L)).thenReturn(Optional.of(plataforma));
 
-        PlataformaDTO dto = plataformaService.buscarPlataforma(1L);
+        PlatformDTO dto = plataformaService.buscarPlataforma(1L);
         assertEquals(plataforma.getId(), dto.getId());
         assertEquals(plataforma.getNome(), dto.getNome());
     }
 
     @Test
     void testCadastrarPlataforma() {
-        PlataformaDTO dto = new PlataformaDTO();
+        PlatformDTO dto = new PlatformDTO();
         dto.setNome("Netflix");
         dto.setPreco(BigDecimal.TEN);
         dto.setUrl("http://netflix.com");
@@ -81,7 +81,7 @@ class PlataformaServiceTest {
             return p;
         });
 
-        PlataformaDTO result = plataformaService.cadastrarPlataforma(dto);
+        PlatformDTO result = plataformaService.cadastrarPlataforma(dto);
 
         ArgumentCaptor<Plataforma> captor = ArgumentCaptor.forClass(Plataforma.class);
         verify(plataformaRepository).save(captor.capture());
@@ -112,14 +112,14 @@ class PlataformaServiceTest {
         when(plataformaRepository.findById(1L)).thenReturn(Optional.of(existente));
         when(plataformaRepository.save(any(Plataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        PlataformaDTO dto = new PlataformaDTO();
+        PlatformDTO dto = new PlatformDTO();
         dto.setNome("Novo");
         dto.setPreco(BigDecimal.TEN);
         dto.setUrl("http://teste.com");
         dto.setTipoServico(TipoServico.STREAMING_VIDEO);
         dto.setTotalVagas(3);
 
-        PlataformaDTO result = plataformaService.atualizarPlataforma(1L, dto);
+        PlatformDTO result = plataformaService.atualizarPlataforma(1L, dto);
 
         ArgumentCaptor<Plataforma> captor = ArgumentCaptor.forClass(Plataforma.class);
         verify(plataformaRepository).save(captor.capture());

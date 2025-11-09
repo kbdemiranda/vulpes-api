@@ -1,13 +1,13 @@
 package io.github.vulpes.applications.service;
 
-import io.github.vulpes.applications.dto.AssinanteDTO;
-import io.github.vulpes.applications.service.impl.AssinanteServiceImpl;
+import io.github.vulpes.applications.dto.SubscriberDTO;
+import io.github.vulpes.applications.service.impl.SubscriberServiceImpl;
 import io.github.vulpes.domain.models.Assinante;
-import io.github.vulpes.domain.models.AssinantePlataforma;
+import io.github.vulpes.domain.models.SubscriberPlatform;
 import io.github.vulpes.domain.models.Plataforma;
-import io.github.vulpes.infrastructure.jpa.AssinantePlataformaRepository;
-import io.github.vulpes.infrastructure.jpa.AssinanteRepository;
-import io.github.vulpes.infrastructure.jpa.PlataformaRepository;
+import io.github.vulpes.infrastructure.jpa.SubscriberPlatformRepository;
+import io.github.vulpes.infrastructure.jpa.SubscriberRepository;
+import io.github.vulpes.infrastructure.jpa.PlatformRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,19 +33,19 @@ import static org.mockito.Mockito.*;
 class AssinanteServiceTest {
 
     @Mock
-    private AssinanteRepository assinanteRepository;
+    private SubscriberRepository assinanteRepository;
     @Mock
-    private PlataformaRepository plataformaRepository;
+    private PlatformRepository plataformaRepository;
     @Mock
-    private AssinantePlataformaRepository assinantePlataformaRepository;
+    private SubscriberPlatformRepository assinantePlataformaRepository;
     @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
-    private AssinanteServiceImpl assinanteService;
+    private SubscriberServiceImpl assinanteService;
 
     private Assinante assinante;
-    private AssinanteDTO assinanteDTO;
+    private SubscriberDTO subscriberDTO;
     private Plataforma plataforma;
 
     @BeforeEach
@@ -59,12 +59,12 @@ class AssinanteServiceTest {
         assinante.setNome("João Silva");
         assinante.setEmail("joao@email.com");
 
-        assinanteDTO = new AssinanteDTO();
-        assinanteDTO.setId(1L);
-        assinanteDTO.setNome("João Silva");
-        assinanteDTO.setEmail("joao@email.com");
-        assinanteDTO.setPlataformasAssociadas(new ArrayList<>());
-        assinanteDTO.setValorPorMes(BigDecimal.ZERO);
+        subscriberDTO = new SubscriberDTO();
+        subscriberDTO.setId(1L);
+        subscriberDTO.setNome("João Silva");
+        subscriberDTO.setEmail("joao@email.com");
+        subscriberDTO.setPlataformasAssociadas(new ArrayList<>());
+        subscriberDTO.setValorPorMes(BigDecimal.ZERO);
 
         plataforma = new Plataforma();
         plataforma.setId(1L);
@@ -81,9 +81,9 @@ class AssinanteServiceTest {
         when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
         when(assinantePlataformaRepository.findPlataformaIdsByAssinanteId(1L)).thenReturn(new ArrayList<>());
         when(plataformaRepository.findAllById(new ArrayList<>())).thenReturn(new ArrayList<>());
-        when(modelMapper.map(assinante, AssinanteDTO.class)).thenReturn(assinanteDTO);
+        when(modelMapper.map(assinante, SubscriberDTO.class)).thenReturn(subscriberDTO);
 
-        AssinanteDTO result = assinanteService.buscarAssinante(1L);
+        SubscriberDTO result = assinanteService.buscarAssinante(1L);
 
         assertNotNull(result);
         assertEquals(assinante.getId(), result.getId());
@@ -120,10 +120,10 @@ class AssinanteServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         when(assinanteRepository.findAssinante("", pageRequest)).thenReturn(page);
-        when(modelMapper.map(assinante, AssinanteDTO.class)).thenReturn(assinanteDTO);
-        when(modelMapper.map(assinante2, AssinanteDTO.class)).thenReturn(createAssinanteDTO(2L, "Maria Santos"));
+        when(modelMapper.map(assinante, SubscriberDTO.class)).thenReturn(subscriberDTO);
+        when(modelMapper.map(assinante2, SubscriberDTO.class)).thenReturn(createAssinanteDTO(2L, "Maria Santos"));
 
-        Page<AssinanteDTO> result = assinanteService.listarAssinantes("", pageRequest);
+        Page<SubscriberDTO> result = assinanteService.listarAssinantes("", pageRequest);
 
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
@@ -142,7 +142,7 @@ class AssinanteServiceTest {
 
         when(assinanteRepository.findAssinante("nonexistent", pageRequest)).thenReturn(emptyPage);
 
-        Page<AssinanteDTO> result = assinanteService.listarAssinantes("nonexistent", pageRequest);
+        Page<SubscriberDTO> result = assinanteService.listarAssinantes("nonexistent", pageRequest);
 
         assertNotNull(result);
         assertTrue(result.getContent().isEmpty());
@@ -151,8 +151,8 @@ class AssinanteServiceTest {
         verify(assinanteRepository).findAssinante("nonexistent", pageRequest);
     }
 
-    private AssinanteDTO createAssinanteDTO(Long id, String nome) {
-        AssinanteDTO dto = new AssinanteDTO();
+    private SubscriberDTO createAssinanteDTO(Long id, String nome) {
+        SubscriberDTO dto = new SubscriberDTO();
         dto.setId(id);
         dto.setNome(nome);
         dto.setEmail("maria@email.com");
@@ -164,7 +164,7 @@ class AssinanteServiceTest {
     @Test
     @DisplayName("Should successfully create new assinante")
     void testCadastrarAssinante_Success() {
-        AssinanteDTO inputDto = new AssinanteDTO();
+        SubscriberDTO inputDto = new SubscriberDTO();
         inputDto.setNome("João Silva");
         inputDto.setEmail("joao@email.com");
 
@@ -176,9 +176,9 @@ class AssinanteServiceTest {
         });
 
         // Mock mapper to convert the saved entity to DTO reflecting fields
-        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenAnswer(invocation -> {
+        when(modelMapper.map(any(Assinante.class), eq(SubscriberDTO.class))).thenAnswer(invocation -> {
             Assinante source = invocation.getArgument(0);
-            AssinanteDTO dto = new AssinanteDTO();
+            SubscriberDTO dto = new SubscriberDTO();
             dto.setId(source.getId());
             dto.setNome(source.getNome());
             dto.setEmail(source.getEmail());
@@ -187,7 +187,7 @@ class AssinanteServiceTest {
             return dto;
         });
 
-        AssinanteDTO result = assinanteService.cadastrarAssinante(inputDto);
+        SubscriberDTO result = assinanteService.cadastrarAssinante(inputDto);
 
         assertNotNull(result);
         assertEquals("João Silva", result.getNome());
@@ -200,7 +200,7 @@ class AssinanteServiceTest {
     @Test
     @DisplayName("Should throw exception when saving assinante with null data")
     void testCadastrarAssinante_NullData() {
-        AssinanteDTO inputDto = new AssinanteDTO();
+        SubscriberDTO inputDto = new SubscriberDTO();
         inputDto.setNome(null);
         inputDto.setEmail("sem.nome@email.com");
 
@@ -213,13 +213,13 @@ class AssinanteServiceTest {
         // Save is attempted and fails due to invalid data
         verify(assinanteRepository, times(1)).save(argThat(a -> a.getNome() == null));
         // Mapping should not be called when save fails
-        verify(modelMapper, never()).map(any(Assinante.class), eq(AssinanteDTO.class));
+        verify(modelMapper, never()).map(any(Assinante.class), eq(SubscriberDTO.class));
     }
 
     @Test
     @DisplayName("Should successfully update existing assinante")
     void testAtualizarAssinante_Success() {
-        AssinanteDTO inputDto = new AssinanteDTO();
+        SubscriberDTO inputDto = new SubscriberDTO();
         inputDto.setNome("João Atualizado");
         inputDto.setEmail("joao.updated@email.com");
 
@@ -230,9 +230,9 @@ class AssinanteServiceTest {
 
         when(assinanteRepository.findById(1L)).thenReturn(Optional.of(assinante));
         when(assinanteRepository.save(any(Assinante.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(modelMapper.map(any(Assinante.class), eq(AssinanteDTO.class))).thenReturn(inputDto);
+        when(modelMapper.map(any(Assinante.class), eq(SubscriberDTO.class))).thenReturn(inputDto);
 
-        AssinanteDTO result = assinanteService.atualizarAssinante(1L, inputDto);
+        SubscriberDTO result = assinanteService.atualizarAssinante(1L, inputDto);
 
         assertNotNull(result);
         assertEquals("João Atualizado", result.getNome());
@@ -245,7 +245,7 @@ class AssinanteServiceTest {
     @Test
     @DisplayName("Should throw exception when updating non-existent assinante")
     void testAtualizarAssinante_NotFound() {
-        AssinanteDTO inputDto = new AssinanteDTO();
+        SubscriberDTO inputDto = new SubscriberDTO();
         inputDto.setNome("João");
 
         when(assinanteRepository.findById(1L)).thenReturn(Optional.empty());
@@ -294,7 +294,7 @@ class AssinanteServiceTest {
         when(plataformaRepository.findById(1L)).thenReturn(Optional.of(plataforma));
         when(plataformaRepository.findById(2L)).thenReturn(Optional.of(plataforma2));
         when(plataformaRepository.save(any(Plataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(assinantePlataformaRepository.save(any(AssinantePlataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(assinantePlataformaRepository.save(any(SubscriberPlatform.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         assertDoesNotThrow(() -> assinanteService.associarPlataformas(1L, plataformaIds));
 
@@ -302,7 +302,7 @@ class AssinanteServiceTest {
         verify(plataformaRepository).findById(1L);
         verify(plataformaRepository).findById(2L);
         verify(plataformaRepository, times(2)).save(any(Plataforma.class));
-        verify(assinantePlataformaRepository, times(2)).save(any(AssinantePlataforma.class));
+        verify(assinantePlataformaRepository, times(2)).save(any(SubscriberPlatform.class));
 
         assertEquals(4, plataforma.getVagasDisponiveis());
         assertEquals(1, plataforma2.getVagasDisponiveis());
@@ -335,7 +335,7 @@ class AssinanteServiceTest {
         verify(assinanteRepository).findById(1L);
         verify(plataformaRepository).findById(1L);
         verify(plataformaRepository, never()).save(any(Plataforma.class));
-        verify(assinantePlataformaRepository, never()).save(any(AssinantePlataforma.class));
+        verify(assinantePlataformaRepository, never()).save(any(SubscriberPlatform.class));
     }
 
     @Test
@@ -351,7 +351,7 @@ class AssinanteServiceTest {
         plataforma.setId(plataformaId);
         plataforma.setVagasDisponiveis(2);
 
-        AssinantePlataforma assinantePlataforma = new AssinantePlataforma();
+        SubscriberPlatform assinantePlataforma = new SubscriberPlatform();
         assinantePlataforma.setAssinante(assinante);
         assinantePlataforma.setPlataforma(plataforma);
 

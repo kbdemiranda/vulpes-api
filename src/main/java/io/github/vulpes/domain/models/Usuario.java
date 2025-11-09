@@ -16,35 +16,35 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 
 @Entity
-@Table(name = "usuarios", schema = "vulpes")
+@Table(name = "users", schema = "vulpes")
 public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nome", nullable = false)
+    @Column(name = "name", nullable = false)
     private String nome;
-    @Column(name = "sobrenome", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String sobrenome;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    @Column(name = "senha", nullable = false)
+    @Column(name = "password", nullable = false)
     private String senha;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "usuarios_perfis",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "perfil_id"))
-    private List<Perfil> perfis;
+            name = "users_profiles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "profile_id"))
+    private List<Profile> perfis;
 
-    @Column(name = "data_ultimo_login")
+    @Column(name = "last_login_date")
     private LocalDateTime dataUltimoLogin;
-    @Column(name = "cadastrado_em", nullable = false)
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime cadastradoEm;
-    @Column(name = "atualizado_em")
+    @Column(name = "updated_at")
     private LocalDateTime atualizadoEm;
-    @Column(name = "excluido_em")
+    @Column(name = "deleted_at")
     private LocalDateTime excluidoEm;
 
     @Override

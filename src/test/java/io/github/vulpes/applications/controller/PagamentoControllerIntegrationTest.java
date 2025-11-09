@@ -1,11 +1,11 @@
 package io.github.vulpes.applications.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vulpes.applications.dto.PagamentoDTO;
+import io.github.vulpes.applications.dto.PaymentDTO;
 import io.github.vulpes.domain.models.Assinante;
 import io.github.vulpes.domain.models.Pagamento;
-import io.github.vulpes.infrastructure.jpa.AssinanteRepository;
-import io.github.vulpes.infrastructure.jpa.PagamentoRepository;
+import io.github.vulpes.infrastructure.jpa.SubscriberRepository;
+import io.github.vulpes.infrastructure.jpa.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,10 @@ class PagamentoControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private PagamentoRepository pagamentoRepository;
+    private PaymentRepository pagamentoRepository;
 
     @Autowired
-    private AssinanteRepository assinanteRepository;
+    private SubscriberRepository assinanteRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -86,7 +86,7 @@ class PagamentoControllerIntegrationTest {
     @DisplayName("Should successfully create new pagamento")
     @Transactional
     void testRegistrarPagamento_Success() throws Exception {
-        PagamentoDTO novoPagamento = new PagamentoDTO();
+        PaymentDTO novoPagamento = new PaymentDTO();
         novoPagamento.setAssinanteId(testeAssinante.getId());
         novoPagamento.setValorPago(new BigDecimal("59.90"));
         novoPagamento.setDataPagamento(LocalDateTime.now().minusDays(2));
@@ -112,7 +112,7 @@ class PagamentoControllerIntegrationTest {
     @Test
     @DisplayName("Should return 500 for invalid pagamento data")
     void testRegistrarPagamento_InvalidData() throws Exception {
-        PagamentoDTO invalidPagamento = new PagamentoDTO();
+        PaymentDTO invalidPagamento = new PaymentDTO();
         // Missing required fields: assinanteId, valorPago, dataPagamento, mesesCobertos
 
         mockMvc.perform(post("/pagamentos")
@@ -128,7 +128,7 @@ class PagamentoControllerIntegrationTest {
     @Test
     @DisplayName("Should return 500 for negative valor_pago due to validation")
     void testRegistrarPagamento_NegativeValue() throws Exception {
-        PagamentoDTO invalidPagamento = new PagamentoDTO();
+        PaymentDTO invalidPagamento = new PaymentDTO();
         invalidPagamento.setAssinanteId(testeAssinante.getId());
         invalidPagamento.setValorPago(new BigDecimal("-10.00")); // Negative value - validation rejects this
         invalidPagamento.setDataPagamento(LocalDateTime.now());
@@ -170,7 +170,7 @@ class PagamentoControllerIntegrationTest {
     @DisplayName("Should successfully update existing pagamento")
     @Transactional
     void testAtualizarPagamento_Success() throws Exception {
-        PagamentoDTO updatedDto = new PagamentoDTO();
+        PaymentDTO updatedDto = new PaymentDTO();
         updatedDto.setAssinanteId(testeAssinante.getId());
         updatedDto.setValorPago(new BigDecimal("39.90"));
         updatedDto.setDataPagamento(LocalDateTime.now().minusDays(3));
@@ -194,7 +194,7 @@ class PagamentoControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when updating non-existent pagamento")
     void testAtualizarPagamento_NotFound() throws Exception {
-        PagamentoDTO updatedDto = new PagamentoDTO();
+        PaymentDTO updatedDto = new PaymentDTO();
         updatedDto.setAssinanteId(testeAssinante.getId());
         updatedDto.setValorPago(new BigDecimal("39.90"));
         updatedDto.setDataPagamento(LocalDateTime.now());
@@ -301,7 +301,7 @@ class PagamentoControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 for invalid assinante ID in pagamento creation")
     void testRegistrarPagamento_InvalidAssinanteId() throws Exception {
-        PagamentoDTO invalidPagamento = new PagamentoDTO();
+        PaymentDTO invalidPagamento = new PaymentDTO();
         invalidPagamento.setAssinanteId(999L); // Non-existent assinante
         invalidPagamento.setValorPago(new BigDecimal("29.90"));
         invalidPagamento.setDataPagamento(LocalDateTime.now());

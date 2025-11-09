@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AssinanteRepository extends JpaRepository<Assinante, Long> {
+public interface SubscriberRepository extends JpaRepository<Assinante, Long> {
 
     @Query("select a from Assinante a " +
             "where (:nome is null or a.nome like %:nome%) " +

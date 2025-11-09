@@ -13,32 +13,32 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 
 @Entity
-@Table(name = "pagamentos", schema = "vulpes")
+@Table(name = "payments", schema = "vulpes")
 public class Pagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "assinante_id", nullable = false)
+    @JoinColumn(name = "subscriber_id", nullable = false)
     private Assinante assinante;
 
-    @Column(name = "valor_pago", nullable = false)
+    @Column(name = "amount_paid", nullable = false)
     private BigDecimal valorPago;
 
-    @Column(name = "data_pagamento", nullable = false)
+    @Column(name = "payment_date", nullable = false)
     private LocalDateTime dataPagamento;
 
-    @Column(name = "meses_cobertos", nullable = false)
+    @Column(name = "months_covered", nullable = false)
     private Integer mesesCobertos;
 
-    @Column(name = "cadastrado_em", nullable = false)
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime cadastradoEm;
 
-    @Column(name = "atualizado_em")
+    @Column(name = "updated_at")
     private LocalDateTime atualizadoEm;
 
-    @Column(name = "excluido_em")
+    @Column(name = "deleted_at")
     private LocalDateTime excluidoEm;
 
 }

@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PagamentoRepository  extends JpaRepository<Pagamento, Long> {
+public interface PaymentRepository extends JpaRepository<Pagamento, Long> {
     @Query("SELECT p FROM Pagamento p WHERE p.assinante.nome LIKE %:nomeAssinante% and p.excluidoEm is null")
     Page<Pagamento> findPagamentos(@Param("nomeAssinante") String nomeAssinante, Pageable pageable);
 

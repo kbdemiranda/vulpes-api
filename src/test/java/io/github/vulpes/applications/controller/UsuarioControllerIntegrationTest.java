@@ -1,11 +1,11 @@
 package io.github.vulpes.applications.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vulpes.applications.dto.UsuarioDTO;
-import io.github.vulpes.domain.models.Perfil;
+import io.github.vulpes.applications.dto.UserDTO;
+import io.github.vulpes.domain.models.Profile;
 import io.github.vulpes.domain.models.Usuario;
-import io.github.vulpes.infrastructure.jpa.PerfilRepository;
-import io.github.vulpes.infrastructure.jpa.UsuarioRepository;
+import io.github.vulpes.infrastructure.jpa.ProfileRepository;
+import io.github.vulpes.infrastructure.jpa.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,10 +39,10 @@ class UsuarioControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
     @Autowired
-    private PerfilRepository perfilRepository;
+    private ProfileRepository perfilRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -54,8 +53,8 @@ class UsuarioControllerIntegrationTest {
     private MockMvc mockMvc;
 
     private Usuario testeUsuario;
-    private Perfil testePerfil;
-    private Perfil testePerfil2;
+    private Profile testePerfil;
+    private Profile testePerfil2;
 
     @BeforeEach
     void setUp() {
@@ -69,11 +68,11 @@ class UsuarioControllerIntegrationTest {
         perfilRepository.deleteAll();
         
         // Create test profiles
-        testePerfil = new Perfil();
+        testePerfil = new Profile();
         testePerfil.setNome("ADMIN");
         testePerfil = perfilRepository.save(testePerfil);
 
-        testePerfil2 = new Perfil();
+        testePerfil2 = new Profile();
         testePerfil2.setNome("USER");
         testePerfil2 = perfilRepository.save(testePerfil2);
 
@@ -94,7 +93,7 @@ class UsuarioControllerIntegrationTest {
     @DisplayName("Should successfully create new usuario")
     @Transactional
     void testCadastrarUsuario_Success() throws Exception {
-        UsuarioDTO novoUsuario = new UsuarioDTO();
+        UserDTO novoUsuario = new UserDTO();
         novoUsuario.setNome("Maria");
         novoUsuario.setSobrenome("Santos");
         novoUsuario.setEmail("maria.santos@example.com");
@@ -177,7 +176,7 @@ class UsuarioControllerIntegrationTest {
     @Transactional
     void testAtualizarSenha_Success() throws Exception {
         // Create a complete DTO to pass validation
-        UsuarioDTO senhaDto = new UsuarioDTO();
+        UserDTO senhaDto = new UserDTO();
         senhaDto.setNome("temp");
         senhaDto.setSobrenome("temp");
         senhaDto.setEmail("temp@temp.com");
@@ -206,7 +205,7 @@ class UsuarioControllerIntegrationTest {
     @DisplayName("Should return 404 when updating password for non-existent usuario")
     void testAtualizarSenha_NotFound() throws Exception {
         // Create a complete DTO to pass validation
-        UsuarioDTO senhaDto = new UsuarioDTO();
+        UserDTO senhaDto = new UserDTO();
         senhaDto.setNome("temp");
         senhaDto.setSobrenome("temp");
         senhaDto.setEmail("temp@temp.com");
@@ -225,7 +224,7 @@ class UsuarioControllerIntegrationTest {
     @Transactional
     void testAtualizarPerfis_Success() throws Exception {
         // Create a complete DTO to pass validation
-        UsuarioDTO perfisDto = new UsuarioDTO();
+        UserDTO perfisDto = new UserDTO();
         perfisDto.setNome("temp");
         perfisDto.setSobrenome("temp");
         perfisDto.setEmail("temp@temp.com");
@@ -250,7 +249,7 @@ class UsuarioControllerIntegrationTest {
     @DisplayName("Should return 404 when updating perfis for non-existent usuario")
     void testAtualizarPerfis_NotFound() throws Exception {
         // Create a complete DTO to pass validation
-        UsuarioDTO perfisDto = new UsuarioDTO();
+        UserDTO perfisDto = new UserDTO();
         perfisDto.setNome("temp");
         perfisDto.setSobrenome("temp");
         perfisDto.setEmail("temp@temp.com");
@@ -269,7 +268,7 @@ class UsuarioControllerIntegrationTest {
     @Transactional
     void testAtualizarUsuario_Success() throws Exception {
         // Create a complete DTO for update
-        UsuarioDTO updatedDto = new UsuarioDTO();
+        UserDTO updatedDto = new UserDTO();
         updatedDto.setNome("João Updated");
         updatedDto.setSobrenome("Silva Updated");
         updatedDto.setEmail("joao.updated@example.com");
@@ -303,7 +302,7 @@ class UsuarioControllerIntegrationTest {
     @DisplayName("Should return 404 when updating non-existent usuario")
     void testAtualizarUsuario_NotFound() throws Exception {
         // Create a complete DTO for validation
-        UsuarioDTO updatedDto = new UsuarioDTO();
+        UserDTO updatedDto = new UserDTO();
         updatedDto.setNome("Non-existent");
         updatedDto.setSobrenome("User");
         updatedDto.setEmail("nonexistent@example.com");
@@ -345,7 +344,7 @@ class UsuarioControllerIntegrationTest {
     @Test
     @DisplayName("Should return 500 for invalid email format due to validation")
     void testCadastrarUsuario_InvalidEmail() throws Exception {
-        UsuarioDTO invalidUsuario = new UsuarioDTO();
+        UserDTO invalidUsuario = new UserDTO();
         invalidUsuario.setNome("Test");
         invalidUsuario.setSobrenome("User");
         invalidUsuario.setEmail("invalid-email"); // Invalid email format
@@ -365,7 +364,7 @@ class UsuarioControllerIntegrationTest {
     @Test
     @DisplayName("Should return 500 for missing required fields")
     void testCadastrarUsuario_MissingFields() throws Exception {
-        UsuarioDTO incompleteUsuario = new UsuarioDTO();
+        UserDTO incompleteUsuario = new UserDTO();
         incompleteUsuario.setEmail("test@example.com");
         // Missing nome, sobrenome, senha, perfisId
 

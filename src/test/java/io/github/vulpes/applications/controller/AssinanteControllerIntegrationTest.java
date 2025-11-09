@@ -1,13 +1,13 @@
 package io.github.vulpes.applications.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vulpes.applications.dto.AssinanteDTO;
-import io.github.vulpes.applications.dto.AssociarPlataformasDTO;
+import io.github.vulpes.applications.dto.SubscriberDTO;
+import io.github.vulpes.applications.dto.AssociatePlatformsDTO;
 import io.github.vulpes.domain.enums.TipoServico;
 import io.github.vulpes.domain.models.Assinante;
 import io.github.vulpes.domain.models.Plataforma;
-import io.github.vulpes.infrastructure.jpa.AssinanteRepository;
-import io.github.vulpes.infrastructure.jpa.PlataformaRepository;
+import io.github.vulpes.infrastructure.jpa.SubscriberRepository;
+import io.github.vulpes.infrastructure.jpa.PlatformRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,10 +40,10 @@ class AssinanteControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private AssinanteRepository assinanteRepository;
+    private SubscriberRepository assinanteRepository;
 
     @Autowired
-    private PlataformaRepository plataformaRepository;
+    private PlatformRepository plataformaRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -146,7 +146,7 @@ class AssinanteControllerIntegrationTest {
     @DisplayName("Should successfully create new assinante")
     @Transactional
     void testCadastrarAssinante_Success() throws Exception {
-        AssinanteDTO novoAssinante = new AssinanteDTO();
+        SubscriberDTO novoAssinante = new SubscriberDTO();
         novoAssinante.setNome("Maria Santos");
         novoAssinante.setEmail("maria.santos@example.com");
 
@@ -170,7 +170,7 @@ class AssinanteControllerIntegrationTest {
     @DisplayName("Should successfully update existing assinante")
     @Transactional
     void testAtualizarAssinante_Success() throws Exception {
-        AssinanteDTO updatedDto = new AssinanteDTO();
+        SubscriberDTO updatedDto = new SubscriberDTO();
         updatedDto.setNome("João Silva Updated");
         updatedDto.setEmail("joao.silva.updated@example.com");
 
@@ -192,7 +192,7 @@ class AssinanteControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when updating non-existent assinante")
     void testAtualizarAssinante_NotFound() throws Exception {
-        AssinanteDTO updatedDto = new AssinanteDTO();
+        SubscriberDTO updatedDto = new SubscriberDTO();
         updatedDto.setNome("Non-existent");
         updatedDto.setEmail("nonexistent@example.com");
 
@@ -232,7 +232,7 @@ class AssinanteControllerIntegrationTest {
     @DisplayName("Should successfully associate plataformas to assinante")
     @Transactional
     void testAssociarPlataformas_Success() throws Exception {
-        AssociarPlataformasDTO associarDto = new AssociarPlataformasDTO();
+        AssociatePlatformsDTO associarDto = new AssociatePlatformsDTO();
         associarDto.setPlataformaIds(Arrays.asList(testePlataforma.getId()));
 
         mockMvc.perform(post("/assinantes/{id}/associar-plataformas", testeAssinante.getId())
@@ -246,7 +246,7 @@ class AssinanteControllerIntegrationTest {
     @Test
     @DisplayName("Should return 400 when associating invalid plataforma")
     void testAssociarPlataformas_InvalidPlataforma() throws Exception {
-        AssociarPlataformasDTO associarDto = new AssociarPlataformasDTO();
+        AssociatePlatformsDTO associarDto = new AssociatePlatformsDTO();
         associarDto.setPlataformaIds(Arrays.asList(999L));
 
         mockMvc.perform(post("/assinantes/{id}/associar-plataformas", testeAssinante.getId())
@@ -261,7 +261,7 @@ class AssinanteControllerIntegrationTest {
     @Transactional
     void testDesassociarPlataforma_Success() throws Exception {
         // First associate a plataforma
-        AssociarPlataformasDTO associarDto = new AssociarPlataformasDTO();
+        AssociatePlatformsDTO associarDto = new AssociatePlatformsDTO();
         associarDto.setPlataformaIds(Arrays.asList(testePlataforma.getId()));
         
         mockMvc.perform(post("/assinantes/{id}/associar-plataformas", testeAssinante.getId())

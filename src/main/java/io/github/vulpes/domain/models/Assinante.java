@@ -13,28 +13,28 @@ import org.hibernate.annotations.Where;
 @Builder
 @EqualsAndHashCode(of = "id")
 @Entity
-@Table(name = "assinantes", schema = "vulpes")
-@SQLDelete(sql = "UPDATE vulpes.assinantes SET excluido_em = now() WHERE id = ?")
-@Where(clause = "excluido_em IS NULL")
+@Table(name = "subscribers", schema = "vulpes")
+@SQLDelete(sql = "UPDATE vulpes.subscribers SET deleted_at = now() WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Assinante {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "name", nullable = false)
     private String nome;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "cadastrado_em", nullable = false)
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime cadastradoEm;
 
-    @Column(name = "atualizado_em")
+    @Column(name = "updated_at")
     private LocalDateTime atualizadoEm;
 
-    @Column(name = "excluido_em")
+    @Column(name = "deleted_at")
     private LocalDateTime excluidoEm;
 }
 

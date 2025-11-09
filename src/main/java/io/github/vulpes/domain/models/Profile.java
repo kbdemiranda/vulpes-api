@@ -12,12 +12,12 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "usuarios")
 @Entity
-@Table(name = "perfis", schema = "vulpes")
-public class Perfil implements GrantedAuthority {
+@Table(name = "profiles", schema = "vulpes")
+public class Profile implements GrantedAuthority {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nome", nullable = false)
+    @Column(name = "name", nullable = false)
     private String nome;
 
     @ManyToMany(mappedBy = "perfis")

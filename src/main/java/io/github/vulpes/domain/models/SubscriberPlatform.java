@@ -12,28 +12,28 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 
 @Entity
-@Table(name = "assinantes_plataformas", schema = "vulpes")
-public class AssinantePlataforma {
+@Table(name = "subscribers_platforms", schema = "vulpes")
+public class SubscriberPlatform {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "assinante_id", nullable = false)
+    @JoinColumn(name = "subscriber_id", nullable = false)
     private Assinante assinante;
 
     @ManyToOne
-    @JoinColumn(name = "plataforma_id", nullable = false)
+    @JoinColumn(name = "platform_id", nullable = false)
     private Plataforma plataforma;
 
-    @Column(name = "cadastrado_em", nullable = false)
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime cadastradoEm;
 
-    @Column(name = "atualizado_em")
+    @Column(name = "updated_at")
     private LocalDateTime atualizadoEm;
 
-    @Column(name = "excluido_em")
+    @Column(name = "deleted_at")
     private LocalDateTime excluidoEm;
 }
 

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PlataformaRepository extends JpaRepository<Plataforma, Long> {
+public interface PlatformRepository extends JpaRepository<Plataforma, Long> {
 
     @Query("select p from Plataforma p " +
             "where (:nome is null or p.nome like %:nome%) " +

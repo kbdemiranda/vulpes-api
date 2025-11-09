@@ -1,10 +1,10 @@
 package io.github.vulpes.applications.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vulpes.applications.dto.PlataformaDTO;
+import io.github.vulpes.applications.dto.PlatformDTO;
 import io.github.vulpes.domain.enums.TipoServico;
 import io.github.vulpes.domain.models.Plataforma;
-import io.github.vulpes.infrastructure.jpa.PlataformaRepository;
+import io.github.vulpes.infrastructure.jpa.PlatformRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class PlataformaControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private PlataformaRepository plataformaRepository;
+    private PlatformRepository plataformaRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -132,7 +132,7 @@ class PlataformaControllerIntegrationTest {
     @DisplayName("Should successfully create new platform")
     @Transactional
     void testCadastrarPlataforma_Success() throws Exception {
-        PlataformaDTO novaPlataforma = new PlataformaDTO();
+        PlatformDTO novaPlataforma = new PlatformDTO();
         novaPlataforma.setNome("Prime Video");
         novaPlataforma.setPreco(new BigDecimal("14.90"));
         novaPlataforma.setUrl("https://primevideo.com");
@@ -162,7 +162,7 @@ class PlataformaControllerIntegrationTest {
     @DisplayName("Should successfully update existing platform")
     @Transactional
     void testAtualizarPlataforma_Success() throws Exception {
-        PlataformaDTO updatedDto = new PlataformaDTO();
+        PlatformDTO updatedDto = new PlatformDTO();
         updatedDto.setNome("Netflix Premium");
         updatedDto.setPreco(new BigDecimal("39.90"));
         updatedDto.setUrl("https://netflix.com/premium");
@@ -189,7 +189,7 @@ class PlataformaControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when updating non-existent platform")
     void testAtualizarPlataforma_NotFound() throws Exception {
-        PlataformaDTO updatedDto = new PlataformaDTO();
+        PlatformDTO updatedDto = new PlatformDTO();
         updatedDto.setNome("Non-existent");
         updatedDto.setPreco(BigDecimal.TEN);
         updatedDto.setTipoServico(TipoServico.STREAMING_VIDEO);

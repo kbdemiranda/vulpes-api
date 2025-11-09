@@ -1,16 +1,15 @@
 package io.github.vulpes.applications.service;
 
-import io.github.vulpes.applications.dto.PagamentoDTO;
-import io.github.vulpes.applications.service.impl.PagamentoServiceImpl;
+import io.github.vulpes.applications.dto.PaymentDTO;
+import io.github.vulpes.applications.service.impl.PaymentServiceImpl;
 import io.github.vulpes.domain.models.Assinante;
 import io.github.vulpes.domain.models.Pagamento;
-import io.github.vulpes.domain.models.StatusPagamentoMensal;
-import io.github.vulpes.infrastructure.jpa.AssinanteRepository;
-import io.github.vulpes.infrastructure.jpa.PagamentoRepository;
-import io.github.vulpes.infrastructure.jpa.StatusPagamentoMensalRepository;
+import io.github.vulpes.domain.models.MonthlyPaymentStatus;
+import io.github.vulpes.infrastructure.jpa.SubscriberRepository;
+import io.github.vulpes.infrastructure.jpa.PaymentRepository;
+import io.github.vulpes.infrastructure.jpa.MonthlyPaymentStatusRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,7 +22,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,26 +31,26 @@ import static org.mockito.Mockito.*;
 class PagamentoServiceTest {
 
     @Mock
-    private PagamentoRepository pagamentoRepository;
+    private PaymentRepository pagamentoRepository;
     @Mock
-    private StatusPagamentoMensalRepository statusPagamentoMensalRepository;
+    private MonthlyPaymentStatusRepository statusPagamentoMensalRepository;
     @Mock
-    private AssinanteRepository assinanteRepository;
+    private SubscriberRepository assinanteRepository;
 
     @InjectMocks
-    private PagamentoServiceImpl pagamentoService;
+    private PaymentServiceImpl pagamentoService;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        pagamentoService = new PagamentoServiceImpl(pagamentoRepository, statusPagamentoMensalRepository, assinanteRepository);
+        pagamentoService = new PaymentServiceImpl(pagamentoRepository, statusPagamentoMensalRepository, assinanteRepository);
     }
 
     @Test
     void testRegistrarPagamento() {
-        PagamentoDTO dto = new PagamentoDTO();
+        PaymentDTO dto = new PaymentDTO();
         dto.setAssinanteId(1L);
         dto.setValorPago(BigDecimal.TEN);
         dto.setMesesCobertos(2);
@@ -67,10 +65,10 @@ class PagamentoServiceTest {
             return p;
         });
 
-        PagamentoDTO result = pagamentoService.registrarPagamento(dto);
+        PaymentDTO result = pagamentoService.registrarPagamento(dto);
 
         verify(pagamentoRepository).save(any(Pagamento.class));
-        verify(statusPagamentoMensalRepository, times(2)).save(any(StatusPagamentoMensal.class));
+        verify(statusPagamentoMensalRepository, times(2)).save(any(MonthlyPaymentStatus.class));
         assertEquals(1L, result.getId());
         assertEquals(dto.getValorPago(), result.getValorPago());
     }
@@ -81,14 +79,14 @@ class PagamentoServiceTest {
         when(pagamentoRepository.findById(1L)).thenReturn(Optional.of(pagamento));
         when(pagamentoRepository.save(any(Pagamento.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        PagamentoDTO dto = new PagamentoDTO();
+        PaymentDTO dto = new PaymentDTO();
         dto.setValorPago(BigDecimal.TEN);
         dto.setMesesCobertos(2);
         dto.setDataPagamento(LocalDateTime.now());
 
-        PagamentoDTO result = pagamentoService.atualizarPagamento(1L, dto);
+        PaymentDTO result = pagamentoService.atualizarPagamento(1L, dto);
 
-        verify(statusPagamentoMensalRepository, times(2)).save(any(StatusPagamentoMensal.class));
+        verify(statusPagamentoMensalRepository, times(2)).save(any(MonthlyPaymentStatus.class));
         assertEquals(dto.getValorPago(), result.getValorPago());
     }
 
@@ -97,7 +95,7 @@ class PagamentoServiceTest {
         Pagamento pagamento = Pagamento.builder().id(1L).valorPago(BigDecimal.TEN).build();
         when(pagamentoRepository.findById(1L)).thenReturn(Optional.of(pagamento));
 
-        PagamentoDTO dto = pagamentoService.consultarPagamento(1L);
+        PaymentDTO dto = pagamentoService.consultarPagamento(1L);
 
         assertEquals(pagamento.getId(), dto.getId());
         assertEquals(pagamento.getValorPago(), dto.getValorPago());
@@ -109,8 +107,8 @@ class PagamentoServiceTest {
         Page<Pagamento> page = new PageImpl<>(Collections.singletonList(p));
         when(pagamentoRepository.findPagamentos("", PageRequest.of(0, 10))).thenReturn(page);
 
-        Page<PagamentoDTO> expected = page.map(pg -> modelMapper.map(pg, PagamentoDTO.class));
-        Page<PagamentoDTO> result = pagamentoService.listarPagamentos("", PageRequest.of(0, 10));
+        Page<PaymentDTO> expected = page.map(pg -> modelMapper.map(pg, PaymentDTO.class));
+        Page<PaymentDTO> result = pagamentoService.listarPagamentos("", PageRequest.of(0, 10));
 
         assertEquals(expected, result);
     }
@@ -125,7 +123,7 @@ class PagamentoServiceTest {
         when(pagamentoRepository.findPagamentosAssinante(1L, PageRequest.of(0, 10))).thenReturn(page);
         when(statusPagamentoMensalRepository.findMesesByAssinanteId(1L, 1L)).thenReturn(Arrays.asList(1, 2));
 
-        Page<PagamentoDTO> result = pagamentoService.listarPagamentosAssinante(1L, PageRequest.of(0, 10));
+        Page<PaymentDTO> result = pagamentoService.listarPagamentosAssinante(1L, PageRequest.of(0, 10));
 
         assertEquals(1, result.getContent().size());
         assertEquals(2, result.getContent().get(0).getMeses().size());

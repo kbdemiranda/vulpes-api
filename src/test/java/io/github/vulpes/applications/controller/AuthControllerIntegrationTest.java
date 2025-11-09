@@ -2,10 +2,10 @@ package io.github.vulpes.applications.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vulpes.applications.dto.LoginDTO;
-import io.github.vulpes.domain.models.Perfil;
+import io.github.vulpes.domain.models.Profile;
 import io.github.vulpes.domain.models.Usuario;
-import io.github.vulpes.infrastructure.jpa.PerfilRepository;
-import io.github.vulpes.infrastructure.jpa.UsuarioRepository;
+import io.github.vulpes.infrastructure.jpa.ProfileRepository;
+import io.github.vulpes.infrastructure.jpa.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,10 @@ class AuthControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
     @Autowired
-    private PerfilRepository perfilRepository;
+    private ProfileRepository perfilRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,7 +64,7 @@ class AuthControllerIntegrationTest {
         perfilRepository.deleteAll();
         
         // Create test profile
-        Perfil testePerfil = new Perfil();
+        Profile testePerfil = new Profile();
         testePerfil.setNome("USER");
         testePerfil = perfilRepository.save(testePerfil);
 
@@ -180,7 +180,7 @@ class AuthControllerIntegrationTest {
     @DisplayName("Should login successfully for user with multiple perfis")
     void testLogin_UserWithMultiplePerfis() throws Exception {
         // Create additional profile
-        Perfil adminPerfil = new Perfil();
+        Profile adminPerfil = new Profile();
         adminPerfil.setNome("ADMIN");
         adminPerfil = perfilRepository.save(adminPerfil);
         

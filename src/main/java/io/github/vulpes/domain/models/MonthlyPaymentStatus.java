@@ -12,36 +12,36 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 
 @Entity
-@Table(name = "status_pagamento_mensal")
-public class StatusPagamentoMensal {
+@Table(name = "monthly_payment_status", schema = "vulpes")
+public class MonthlyPaymentStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "assinante_id", nullable = false)
+    @JoinColumn(name = "subscriber_id", nullable = false)
     private Assinante assinante;
 
     @ManyToOne
-    @JoinColumn(name = "pagamento_id", nullable = false)
+    @JoinColumn(name = "payment_id", nullable = false)
     private Pagamento pagamento;
 
-    @Column(name = "mes", nullable = false)
+    @Column(name = "month", nullable = false)
     private Integer mes;
 
-    @Column(name = "ano", nullable = false)
+    @Column(name = "year", nullable = false)
     private Integer ano;
 
-    @Column(name = "status_pagamento", nullable = false)
+    @Column(name = "payment_status", nullable = false)
     private String statusPagamento;
 
-    @Column(name = "cadastrado_em", nullable = false)
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime cadastradoEm;
 
-    @Column(name = "atualizado_em")
+    @Column(name = "updated_at")
     private LocalDateTime atualizadoEm;
 
-    @Column(name = "excluido_em")
+    @Column(name = "deleted_at")
     private LocalDateTime excluidoEm;
 }
 
