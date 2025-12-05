@@ -1,58 +1,18 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  db:
-    hostname: db
-    container_name: vulpes-db
-    image: kbdemiranda/postgres:bullseye
-    volumes:
-      - ${HOME}/Volumes/VulpesDB:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: SysVulpes
-      POSTGRES_PASSWORD: r2*dNN*26E96
-      POSTGRES_DB: vulpes
+  vulpes-api:
+    image: vulpes-api:latest
+    env_file:
+      - .env   # caminho do seu arquivo de variáveis
     ports:
-      - "5430:5432"
-    networks:
-      - vulpes-network
+      - "8080:8080"  # ajuste conforme sua API expõe
+    restart: unless-stopped
 
-  backend:
-    hostname: backend
-    container_name: vulpes-api
-    build: .
-    # If you prefer a prebuilt image, publish from this repo's Dockerfile with JDK17 and set `image:` here
-    # image: your-registry/vulpes-api:jdk17
+  vulpes-web:
+    image: vulpes-web:latest
     ports:
-      - "9090:8080"
-    environment:
-      HOSTNAME: backend
-      SPRING_APPLICATION_NAME: Vulpes
-      DATABASE_USERNAME: SysVulpes
-      DATABASE_PASSWORD: r2*dNN*26E96
-      DATABASE_URL: jdbc:postgresql://db:5432/vulpes
-      CORSALLOWEDORIGINS: 'http://frontend:4200'
-      CORSALLOWEDMETHODS: GET,POST,PUT,DELETE
-      CORSALLOWEDHEADERS: Authorization,Content-Type
-      CORSEXPOSEDHEADERS: Authorization
-      CORSALLOWCREDENTIALS: 'true'
-      JWTSECRET: ed6341f986937a04de35096f970bea82c40d3c9c847fcfc327b49f8acde20722
+      - "3000:3000"    # React build servido pelo nginx costuma sair na porta 80
+    restart: unless-stopped
     depends_on:
-      - db
-    networks:
-      - vulpes-network
-
-  frontend:
-    hostname: frontend
-    container_name: vulpes-frontend
-    image: kbdemiranda/vulpes-web:latest
-
-    ports:
-      - "4242:8080"
-    depends_on:
-      - backend
-    networks:
-      - vulpes-network
-
-networks:
-  vulpes-network:
-    driver: bridge
+      - vulpes-api

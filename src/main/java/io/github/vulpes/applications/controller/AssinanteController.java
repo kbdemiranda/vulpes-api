@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -52,8 +53,9 @@ public class AssinanteController {
             @PositiveOrZero @RequestParam(defaultValue = "0") int pagina,
             @Parameter(description = "Quantidade por página", example = "10")
             @Min(1) @RequestParam(defaultValue = "10") int quantidade
+//          @Parameter(description = "Ordenação", example = "nome,asc") @RequestParam(defaultValue = "nome,asc") String sort
     ) {
-        return ResponseEntity.ok(assinanteService.listarAssinantes(nome, PageRequest.of(pagina, quantidade)));
+        return ResponseEntity.ok(assinanteService.listarAssinantes(nome, PageRequest.of(pagina, quantidade, Sort.Direction.ASC, "nome")));
     }
 
     @GetMapping("/{id}")

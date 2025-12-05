@@ -1,5 +1,5 @@
 # ========= STAGE 1: BUILD =========
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # Cache de dependências
@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn -q -B -DskipTests package
 
 # ========= STAGE 2: RUNTIME =========
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copia o JAR gerado do build
