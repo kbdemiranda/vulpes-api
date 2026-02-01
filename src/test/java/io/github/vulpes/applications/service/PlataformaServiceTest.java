@@ -1,6 +1,7 @@
 package io.github.vulpes.applications.service;
 
 import io.github.vulpes.applications.dto.PlataformaDTO;
+import io.github.vulpes.applications.dto.PlataformaUpdateDTO;
 import io.github.vulpes.applications.service.impl.PlataformaServiceImpl;
 import io.github.vulpes.domain.enums.TipoServico;
 import io.github.vulpes.domain.models.Plataforma;
@@ -112,7 +113,7 @@ class PlataformaServiceTest {
         when(plataformaRepository.findById(1L)).thenReturn(Optional.of(existente));
         when(plataformaRepository.save(any(Plataforma.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        PlataformaDTO dto = new PlataformaDTO();
+        PlataformaUpdateDTO dto = new PlataformaUpdateDTO();
         dto.setNome("Novo");
         dto.setPreco(BigDecimal.TEN);
         dto.setUrl("http://teste.com");

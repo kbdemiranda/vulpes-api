@@ -1,6 +1,7 @@
 package io.github.vulpes.applications.controller;
 
 import io.github.vulpes.applications.dto.PlataformaDTO;
+import io.github.vulpes.applications.dto.PlataformaUpdateDTO;
 import io.github.vulpes.applications.service.PlataformaService;
 import io.github.vulpes.infrastructure.http.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -92,7 +93,7 @@ public class PlataformaController {
     })
     public ResponseEntity<?> atualizarPlataforma(
             @Parameter(description = "ID da plataforma", example = "1") @PathVariable Long id,
-            @Valid @RequestBody PlataformaDTO dto) {
+            @Valid @RequestBody PlataformaUpdateDTO dto) {
         PlataformaDTO plataformaDTO = plataformaService.atualizarPlataforma(id, dto);
         return ResponseEntity.created(URI.create("/plataformas/" + plataformaDTO.getId())).body(plataformaDTO);
     }
