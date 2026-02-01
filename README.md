@@ -1,92 +1,107 @@
-# Vulpes - Gerenciador de Assinaturas
+# Vulpes API
 
-## Índice
+Backend **reference project** built with **Java 21 and Spring Boot 3**, focused on
+**clean architecture, domain modeling and production-ready backend patterns**.
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Entidades e Relações](#entidades-e-relações)
-- [Endpoints](#endpoints)
-- [Segurança](#segurança)
-- [Como Rodar o Projeto](#como-rodar-o-projeto)
-- [Testes](#testes)
-- [Documentação da API](#documentação-da-api)
-- [Contribuição](#contribuição)
+This project does **not aim to be a full commercial product**, but rather a
+well-structured backend showcasing **architectural decisions, best practices
+and real-world concerns** commonly found in regulated and large-scale systems.
 
-## Sobre o Projeto
+---
 
-Vulpes é um gerenciador de assinaturas que permite aos usuários controlar suas diversas assinaturas de serviços como streaming, software, entre outros. O projeto foi desenvolvido usando Spring Boot no backend.
+## 🎯 Project Goals
 
-## Tecnologias Utilizadas
+- Demonstrate clean backend architecture using **modern Java (21)**
+- Apply domain-driven design principles
+- Showcase security, data integrity and scalability concerns
+- Serve as a technical reference for **Spring Boot 3** backend projects
 
-- Java 11
-- Spring Boot
+---
+
+## 🏗️ Architecture Overview
+
+The project follows a **layered, domain-oriented architecture**, clearly
+separating responsibilities:
+
+- **API Layer**  
+  REST controllers, request/response mapping and validation
+
+- **Application Layer**  
+  Use cases, orchestration logic and transactional boundaries
+
+- **Domain Layer**  
+  Core business rules, entities and domain services
+
+- **Infrastructure Layer**  
+  Persistence, security, external integrations and framework-specific concerns
+
+This separation enables high testability, low coupling and clear business
+boundaries.
+
+---
+
+## 🧠 Key Technical Decisions
+
+- **Java 21** for long-term support and modern language features
+- **Spring Boot 3.5.x** for ecosystem maturity and productivity
+- **Spring Security** with stateless authentication using **JWT**
+- **PostgreSQL** as the primary relational database
+- **JPA / Hibernate** for persistence abstraction
+- **Flyway** for database versioning and schema evolution
+- **DTO mapping** using ModelMapper to isolate domain from transport layer
+- **Lombok** to reduce boilerplate while keeping the domain expressive
+- **Actuator** for application health and metrics exposure
+
+---
+
+## 🛠️ Tech Stack
+
+- Java 21
+- Spring Boot 3.5.x
 - Spring Security
-- JWT para autenticação
+- JWT (java-jwt)
+- Spring Data JPA (Hibernate)
 - PostgreSQL
-- JPA/Hibernate
+- Flyway
+- ModelMapper
+- Lombok
+- Spring Validation
+- Spring Actuator
+- OpenAPI / Swagger (springdoc)
+
+---
+
+## 🔐 Security Model
+
+- Stateless authentication using **JWT**
+- Role-based access control
+- Security configuration isolated from business logic
+- API boundaries protected via Spring Security filters
+
+---
+
+## 🗄️ Domain Overview
+
+The domain models a **subscription management context**, including:
+
+- Subscribers
+- Platforms
+- Payments
+- User access and roles
+- Monthly payment status
+
+The focus is on **business consistency and domain rules**, not pure CRUD.
+
+---
+
+## 🚀 Running the Project Locally
+
+### Prerequisites
+- Java 21
+- PostgreSQL
 - Maven
-- JUnit para testes
-- Swagger para documentação da API
 
-## Entidades e Relações
-
-- `Assinante`: Informações sobre o assinante.
-- `AssinantePlataforma`: Relação entre assinantes e plataformas.
-- `Pagamento`: Informações sobre os pagamentos.
-- `Perfil`: Perfis de usuário para controle de acesso.
-- `Plataforma`: Informações sobre as plataformas de assinatura.
-- `StatusPagamentoMensal`: Status mensal dos pagamentos.
-- `Usuario`: Informações sobre os usuários do sistema.
-
-## Endpoints
-
-### Assinantes
-
-- `GET /assinantes`: Listar todos os assinantes.
-- `POST /assinantes`: Cadastrar um novo assinante.
-- `PUT /assinantes/{id}`: Atualizar um assinante.
-- `DELETE /assinantes/{id}`: Excluir um assinante.
-
-### Plataformas
-
-- `GET /plataformas`: Listar todas as plataformas.
-- `POST /plataformas`: Cadastrar uma nova plataforma.
-- `PUT /plataformas/{id}`: Atualizar uma plataforma.
-- `DELETE /plataformas/{id}`: Excluir uma plataforma.
-
-### Pagamentos
-
-- `GET /pagamentos`: Listar todos os pagamentos.
-- `POST /pagamentos`: Registrar um novo pagamento.
-- `PUT /pagamentos/{id}`: Atualizar um pagamento.
-- `DELETE /pagamentos/{id}`: Excluir um pagamento.
-
-### Usuários
-
-- `GET /usuarios`: Listar todos os usuários.
-- `POST /usuarios`: Cadastrar um novo usuário.
-- `PUT /usuarios/{id}`: Atualizar um usuário.
-- `DELETE /usuarios/{id}`: Excluir um usuário.
-
-## Segurança
-
-O projeto utiliza Spring Security e JWT para autenticação e autorização. O token JWT deve ser incluído no header das requisições.
-
-## Como Rodar o Projeto
-
+### Steps
 ```bash
 mvn clean install
 java -jar target/vulpes-0.0.1-SNAPSHOT.jar
-```
-
-## Testes
-
-O projeto inclui testes unitários e de integração usando JUnit.
-
-## Documentação da API
-
-A documentação da API está disponível através do Swagger em `http://localhost:8080/swagger-ui/`.
-
-## Contribuição
-
-Para contribuir com o projeto, por favor, faça um fork e abra um pull request.
