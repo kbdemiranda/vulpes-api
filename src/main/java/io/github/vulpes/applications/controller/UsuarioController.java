@@ -72,6 +72,19 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioDTO);
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Dados do usuário autenticado", description = "Retorna os dados do usuário atualmente autenticado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário autenticado",
+                    content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<?> buscarUsuarioAtual() {
+        UsuarioDTO usuarioDTO = usuarioService.buscarUsuarioAtual();
+        return ResponseEntity.ok(usuarioDTO);
+    }
+
     @PutMapping("/{id}/senha")
     @Transactional
     @Operation(summary = "Atualizar senha do usuário")

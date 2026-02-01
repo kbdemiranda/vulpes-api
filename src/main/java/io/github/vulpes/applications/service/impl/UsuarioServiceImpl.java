@@ -7,6 +7,7 @@ import io.github.vulpes.domain.models.Usuario;
 import io.github.vulpes.infrastructure.exceptions.VulpesException;
 import io.github.vulpes.infrastructure.jpa.PerfilRepository;
 import io.github.vulpes.infrastructure.jpa.UsuarioRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -113,5 +114,32 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return getUsuario(username);
+    }
+
+    @Override
+    public UsuarioDTO buscarUsuarioAtual() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new VulpesException(401, "Usuário não autenticado");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Usuario) {
+            Usuario usuario = (Usuario) principal;
+            // Reload from repository to ensure latest data
+            Usuario u = usuarioRepository.findById(usuario.getId())
+                    .orElseThrow(() -> new VulpesException(404, "Usuário não encontrado"));
+            return new UsuarioDTO(u);
+        }
+
+        // If principal is a username (String), try to load by email
+        if (principal instanceof String) {
+            String email = (String) principal;
+            Usuario u = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new VulpesException(404, "Usuário não encontrado"));
+            return new UsuarioDTO(u);
+        }
+
+        throw new VulpesException(401, "Usuário não autenticado");
     }
 }

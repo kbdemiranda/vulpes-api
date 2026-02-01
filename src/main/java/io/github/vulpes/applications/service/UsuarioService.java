@@ -16,4 +16,7 @@ public interface UsuarioService extends UserDetailsService {
     void atualizarPerfis(Long id, List<Long> perfis);
     void excluirUsuario(Long id);
 
+    // Retorna os dados do usuário atualmente autenticado
+    UsuarioDTO buscarUsuarioAtual();
+
 }
