@@ -1,11 +1,14 @@
 package io.github.vulpes.domain.models;
 
 import io.github.vulpes.domain.enums.TipoServico;
+import io.github.vulpes.domain.enums.CicloCobranca;
+import io.github.vulpes.domain.converters.MonthDayAttributeConverter;
 import lombok.*;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,5 +52,12 @@ public class Plataforma {
     @Column(name = "excluido_em")
     private LocalDateTime excluidoEm;
 
-}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ciclo_cobranca", nullable = false)
+    private CicloCobranca cicloCobranca = CicloCobranca.MENSAL;
 
+    @Convert(converter = MonthDayAttributeConverter.class)
+    @Column(name = "dia_mes_cobranca")
+    private MonthDay diaMesCobranca;
+
+}

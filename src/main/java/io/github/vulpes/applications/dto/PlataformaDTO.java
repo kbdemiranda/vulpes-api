@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.github.vulpes.domain.enums.TipoServico;
+import io.github.vulpes.domain.enums.CicloCobranca;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
@@ -52,6 +53,14 @@ public class PlataformaDTO {
     @Schema(description = "Vagas disponíveis", example = "5")
     @JsonProperty(value = "vagas_disponiveis", index = 6)
     private Integer vagasDisponiveis;
+
+    @Schema(description = "Ciclo de cobrança da plataforma", example = "MENSAL")
+    @JsonProperty(value = "ciclo_cobranca", index = 10)
+    private CicloCobranca cicloCobranca;
+
+    @Schema(description = "Dia e mês da cobrança para ciclos ANUAL/SEMETRAL (MM-dd)", example = "01-25")
+    @JsonProperty(value = "dia_mes_cobranca", index = 11)
+    private String diaMesCobranca;
 
     @Schema(description = "Data de criação", example = "2024-08-01T10:00:00")
     @JsonProperty(value = "cadastrado_em", index = 7)

@@ -3,6 +3,7 @@ package io.github.vulpes.applications.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.vulpes.domain.enums.TipoServico;
+import io.github.vulpes.domain.enums.CicloCobranca;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -47,4 +48,12 @@ public class PlataformaUpdateDTO {
     @Schema(description = "Total de vagas", example = "5")
     @JsonProperty(value = "total_vagas", index = 5)
     private Integer totalVagas;
+
+    @Schema(description = "Ciclo de cobrança da plataforma", example = "MENSAL")
+    @JsonProperty(value = "ciclo_cobranca", index = 6)
+    private CicloCobranca cicloCobranca;
+
+    @Schema(description = "Dia e mês da cobrança para ciclos ANUAL/SEMETRAL (MM-dd)", example = "01-25")
+    @JsonProperty(value = "dia_mes_cobranca", index = 7)
+    private String diaMesCobranca;
 }
