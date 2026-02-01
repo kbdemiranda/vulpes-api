@@ -1,3 +1,11 @@
+Perfeito, Kaique — agora ficou claro 👍
+Então vamos **alinhar 100% o README do `vulpes-api` com o que o projeto REALMENTE usa hoje**, sem mudar narrativa nem inventar stack.
+
+Abaixo está **apenas o README ajustado**, refletindo **exatamente** o seu `pom.xml` atual (Java 21, Spring Boot 3.5.x, etc.).
+👉 **Substitui o README do projeto por este.**
+
+---
+
 # Vulpes API
 
 Backend **reference project** built with **Java 21 and Spring Boot 3**, focused on
@@ -102,6 +110,63 @@ The focus is on **business consistency and domain rules**, not pure CRUD.
 - Maven
 
 ### Steps
+
 ```bash
 mvn clean install
 java -jar target/vulpes-0.0.1-SNAPSHOT.jar
+````
+
+Configuration is handled via `application.yml`, including database and security
+settings.
+
+---
+
+## 🧪 Testing Strategy
+
+* Unit tests for domain and application layers
+* Integration tests using **H2** for persistence validation
+* Mockito-based test doubles where applicable
+
+Tests focus on **behavior and business rules**, not framework wiring.
+
+---
+
+## 📄 API Documentation
+
+The API is documented using **OpenAPI / Swagger** and available at:
+
+```
+http://localhost:8080/swagger-ui/
+```
+
+---
+
+## ⚠️ Known Limitations
+
+* No asynchronous messaging (Kafka) at this stage
+* Not optimized for horizontal scaling
+* Simplified domain compared to real-world subscription platforms
+
+These limitations are intentional and documented for clarity.
+
+---
+
+## 🔮 Possible Evolutions
+
+* Introduce asynchronous processing for payments
+* Add caching layer (Redis) for read-heavy operations
+* Improve domain boundaries and aggregates
+* Containerize the application for production scenarios
+
+---
+
+## 📌 Final Notes
+
+This repository is intended to be **read as a codebase**, not just executed.
+
+If you are reviewing this project, focus on:
+
+* package structure
+* separation of concerns
+* architectural consistency
+* technical decision-making
