@@ -1,11 +1,3 @@
-Perfeito, Kaique — agora ficou claro 👍
-Então vamos **alinhar 100% o README do `vulpes-api` com o que o projeto REALMENTE usa hoje**, sem mudar narrativa nem inventar stack.
-
-Abaixo está **apenas o README ajustado**, refletindo **exatamente** o seu `pom.xml` atual (Java 21, Spring Boot 3.5.x, etc.).
-👉 **Substitui o README do projeto por este.**
-
----
-
 # Vulpes API
 
 Backend **reference project** built with **Java 21 and Spring Boot 3**, focused on
